@@ -159,6 +159,106 @@ Deno.test("the playground has one content-addressed WASM artifact", async () => 
     "the analyzer filename must match its SHA-256 prefix",
   );
 
+  const wasmResponse = await handleRequest(
+    new Request(`https://zigttp.timok.com/${wasmName}`),
+  );
+  assert(wasmResponse.status === 200, "the selected analyzer must be served");
+  assert(
+    wasmResponse.headers.get("content-type") === "application/wasm",
+    "the selected analyzer must retain its WASM content type",
+  );
+  assert(
+    wasmResponse.headers.get("cache-control") ===
+      "public, max-age=31536000, immutable",
+    "the content-addressed analyzer must be served with immutable caching",
+  );
+  const servedWasm = new Uint8Array(await wasmResponse.arrayBuffer());
+  assert(
+    servedWasm.length === wasm.length &&
+      servedWasm.every((byte, index) => byte === wasm[index]),
+    "the served analyzer bytes must match the checked-in artifact",
+  );
+
+  const module = await WebAssembly.compile(wasm);
+  const env: Record<string, () => number> = {};
+  for (const entry of WebAssembly.Module.imports(module)) {
+    if (entry.module === "env" && entry.kind === "function") {
+      env[entry.name] = () => 0;
+    }
+  }
+  const instance = await WebAssembly.instantiate(module, { env });
+  const analyzer = instance.exports as unknown as {
+    memory: WebAssembly.Memory;
+    alloc: (length: bigint) => bigint;
+    free: (pointer: bigint, length: bigint) => void;
+    analyze: (pointer: bigint, length: bigint, isTsx: number) => bigint;
+  };
+  assert(
+    analyzer.memory instanceof WebAssembly.Memory,
+    "analyzer must export memory",
+  );
+  assert(typeof analyzer.alloc === "function", "analyzer must export alloc");
+  assert(typeof analyzer.free === "function", "analyzer must export free");
+  assert(
+    typeof analyzer.analyze === "function",
+    "analyzer must export analyze",
+  );
+
+  function analyzeSource(sourceText: string): {
+    success: boolean;
+    diagnostics?: Array<{ code?: string }>;
+  } {
+    const sourceBytes = new TextEncoder().encode(sourceText);
+    const sourcePointer = analyzer.alloc(BigInt(sourceBytes.length));
+    assert(sourcePointer !== 0n, "analyzer must allocate source input");
+    new Uint8Array(analyzer.memory.buffer).set(
+      sourceBytes,
+      Number(sourcePointer),
+    );
+    const resultPointer = analyzer.analyze(
+      sourcePointer,
+      BigInt(sourceBytes.length),
+      0,
+    );
+    analyzer.free(sourcePointer, BigInt(sourceBytes.length));
+    assert(resultPointer !== 0n, "analyzer must return a result envelope");
+    const resultOffset = Number(resultPointer);
+    const resultLength = new DataView(analyzer.memory.buffer).getUint32(
+      resultOffset,
+      true,
+    );
+    return JSON.parse(
+      new TextDecoder().decode(
+        new Uint8Array(analyzer.memory.buffer, resultOffset + 4, resultLength),
+      ),
+    );
+  }
+
+  const accepted = analyzeSource(
+    `// All guarantees are enforced by default. This Proof<T, P>
+// narrows enforcement to these three; break one and the card flips red.
+structural Guardrails<T> = Proof<T,
+  | "deterministic"
+  | "no_secret_leakage"
+  | "injection_safe"
+>;
+
+function handler(req: Request): Guardrails<Response> {
+  return Response.json({ ok: true });
+}
+`,
+  );
+  assert(accepted.success === true, "analyzer must prove the accepted fixture");
+  const rejected = analyzeSource("class Bad {}\n");
+  assert(
+    rejected.success === false,
+    "analyzer must reject the blocked fixture",
+  );
+  assert(
+    rejected.diagnostics?.some((diagnostic) => diagnostic.code === "ZTS001"),
+    "the rejected fixture must report ZTS001",
+  );
+
   const playground = await source("static/playground.js");
   const references = [
     ...playground.matchAll(

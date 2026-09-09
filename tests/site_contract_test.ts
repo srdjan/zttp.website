@@ -127,7 +127,7 @@ Deno.test("every static image is referenced by a document", async () => {
   }
 });
 
-Deno.test("the playground references a valid content-addressed WASM artifact", async () => {
+Deno.test("the playground has one content-addressed WASM artifact", async () => {
   const wasmFiles: string[] = [];
   for await (
     const entry of Deno.readDir(new URL("../static", import.meta.url))
@@ -137,28 +137,27 @@ Deno.test("the playground references a valid content-addressed WASM artifact", a
     }
   }
   assert(
-    wasmFiles.length >= 1,
-    "static must contain at least one analyzer WASM",
+    wasmFiles.length === 1,
+    "static must contain exactly one analyzer WASM",
   );
 
-  for (const wasmName of wasmFiles) {
-    assert(
-      /^zts-analyzer\.[0-9a-f]{12}\.wasm$/.test(wasmName),
-      "every website WASM must be a content-addressed analyzer",
-    );
-    const wasm = await Deno.readFile(
-      new URL(`../static/${wasmName}`, import.meta.url),
-    );
-    const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", wasm));
-    const hashPrefix = Array.from(digest)
-      .map((byte) => byte.toString(16).padStart(2, "0"))
-      .join("")
-      .slice(0, 12);
-    assert(
-      wasmName === `zts-analyzer.${hashPrefix}.wasm`,
-      "every analyzer filename must match its SHA-256 prefix",
-    );
-  }
+  const wasmName = wasmFiles[0];
+  assert(
+    /^zts-analyzer\.[0-9a-f]{12}\.wasm$/.test(wasmName),
+    "the only website WASM must be the content-addressed analyzer",
+  );
+  const wasm = await Deno.readFile(
+    new URL(`../static/${wasmName}`, import.meta.url),
+  );
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", wasm));
+  const hashPrefix = Array.from(digest)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 12);
+  assert(
+    wasmName === `zts-analyzer.${hashPrefix}.wasm`,
+    "the analyzer filename must match its SHA-256 prefix",
+  );
 
   const playground = await source("static/playground.js");
   const references = [
@@ -168,7 +167,7 @@ Deno.test("the playground references a valid content-addressed WASM artifact", a
   ];
   assert(references.length === 1, "playground.js must declare one WASM_URL");
   assert(
-    wasmFiles.includes(references[0][1].slice(1)),
+    references[0][1] === `/${wasmName}`,
     "playground.js must reference a checked-in analyzer WASM",
   );
 });

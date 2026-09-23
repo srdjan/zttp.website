@@ -27,10 +27,15 @@ Deno.test("unknown routes return a dedicated recovery page", async () => {
 });
 
 Deno.test("canonical routes retain redirect, cache, and security contracts", async () => {
-  const redirect = await handleRequest(
-    new Request("https://zigttp.timok.com/deck.html"),
-  );
-  assert(responseIsRedirectTo(redirect, "/deck"), "deck.html must redirect");
+  for (const removed of ["/deck", "/deck.html"]) {
+    const redirect = await handleRequest(
+      new Request(`https://zigttp.timok.com${removed}`),
+    );
+    assert(
+      responseIsRedirectTo(redirect, "/"),
+      `${removed} must redirect home now that the deck is gone`,
+    );
+  }
 
   const home = await handleRequest(new Request("https://zigttp.timok.com/"));
   assert(home.status === 200, "the homepage must remain available");
@@ -111,7 +116,6 @@ Deno.test("a stale validator still gets the full body", async () => {
 Deno.test("every static image is referenced by a document", async () => {
   const documents = (await Promise.all([
     source("static/index.html"),
-    source("static/deck.html"),
     source("static/404.html"),
     source("static/manifest.json"),
   ])).join("\n");
@@ -277,21 +281,17 @@ function responseIsRedirectTo(response: Response, location: string): boolean {
     response.headers.get("location") === location;
 }
 
-Deno.test("homepage and deck are usable before enhancement", async () => {
-  const [home, deck, script, homeCss, sharedCss] = await Promise.all([
+Deno.test("homepage is usable before enhancement", async () => {
+  const [home, script, homeCss] = await Promise.all([
     source("static/index.html"),
-    source("static/deck.html"),
     source("static/script.js"),
     source("static/home.css"),
-    source("static/style.css"),
   ]);
 
   assert(home.includes('<html class="no-js"'), "homepage needs a no-js root");
-  assert(deck.includes('<html class="no-js"'), "deck needs a no-js root");
   assert(
-    !home.includes('classList.replace("no-js", "js")') &&
-      !deck.includes('classList.replace("no-js", "js")'),
-    "documents must not claim enhancement before the controller loads",
+    !home.includes('classList.replace("no-js", "js")'),
+    "the document must not claim enhancement before the controller loads",
   );
   assert(
     script.includes('classList.replace("no-js", "js")'),
@@ -300,10 +300,6 @@ Deno.test("homepage and deck are usable before enhancement", async () => {
   assert(
     homeCss.includes(".js .z-menu-button"),
     "homepage must expose the mobile menu button only after enhancement",
-  );
-  assert(
-    sharedCss.includes(".no-js .deck-slide"),
-    "deck must expose every slide without JavaScript",
   );
   assert(
     homeCss.includes(".z-playground:not(.zp-js) .zp-tabs"),
@@ -365,54 +361,5 @@ Deno.test("hidden diagnostics stay out of layout", async () => {
   assert(
     /\.zp-why\[hidden\]\s*\{[^}]*display:\s*none;?[^}]*\}/.test(homeCss),
     "hidden diagnostics must remain out of layout after a proven rerender",
-  );
-});
-
-Deno.test("an optional enhancement cannot abort deck navigation", async () => {
-  const script = await source("static/script.js");
-  const spyIndex = script.indexOf("new IntersectionObserver");
-  const deckIndex = script.indexOf('document.getElementById("deck")');
-
-  assert(
-    spyIndex !== -1 && deckIndex !== -1 && spyIndex < deckIndex,
-    "the scroll spy still precedes deck navigation in the same scope",
-  );
-  assert(
-    script.includes("scroll spy unavailable"),
-    "a failing scroll spy must be caught, not left to abort the file",
-  );
-});
-
-Deno.test("deck navigation exposes current and announced state", async () => {
-  const [deck, script, sharedCss] = await Promise.all([
-    source("static/deck.html"),
-    source("static/script.js"),
-    source("static/style.css"),
-  ]);
-
-  assert(
-    deck.includes('aria-live="polite"'),
-    "slide changes must be announced",
-  );
-  assert(
-    deck.includes('aria-current="step"'),
-    "the initial slide control must expose current state",
-  );
-  assert(
-    script.includes("#slide-"),
-    "deck navigation must preserve the active slide in the URL",
-  );
-  assert(
-    deck.includes('href="/#workflow"') &&
-      !deck.includes('href="/#expert"') &&
-      !deck.includes('href="/#ship"'),
-    "deck links must target current homepage sections",
-  );
-  assert(
-    /@media \(max-width: 480px\)[\s\S]*?\.deck-dots\s*\{[^}]*justify-content:\s*safe center;/
-      .test(
-        sharedCss,
-      ),
-    "overflowing mobile deck dots must keep their leading controls reachable",
   );
 });

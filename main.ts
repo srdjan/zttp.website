@@ -90,12 +90,12 @@ export async function handleRequest(req: Request): Promise<Response> {
   if (path === "/index.html") {
     return permanentRedirect("/");
   }
-  if (path === "/deck.html") {
-    return permanentRedirect("/deck");
+  // The pitch deck was removed; keep its old URLs landing somewhere useful.
+  if (path === "/deck" || path === "/deck.html") {
+    return permanentRedirect("/");
   }
 
   if (path === "/") path = "/index.html";
-  if (path === "/deck") path = "/deck.html";
 
   const headers: Record<string, string> = {
     ...SECURITY_HEADERS,

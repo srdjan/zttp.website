@@ -7,8 +7,8 @@ step, no framework.
 ## Stack
 
 - Runtime: Deno (see `deno.json`). No npm, no bundler.
-- Server: single file `main.ts` - serves `static/` with security headers and a
-  301 from `/deck.html` to `/deck`.
+- Server: single file `main.ts` - serves `static/` with security headers and
+  301s the removed deck URLs to `/`.
 - Frontend: hand-written HTML, vanilla CSS (`static/style.css`,
   `static/home.css`), vanilla JS (`static/script.js`, `static/playground.js`).
   No framework, no build step.
@@ -20,12 +20,10 @@ step, no framework.
 - `main.ts` - HTTP server, CSP, content-type and cache-control rules. Edit here
   for routing or headers.
 - `static/index.html` - landing page.
-- `static/deck.html` - pitch deck. Served at `/deck` (the `.html` form 301s to
-  `/deck`); keep that invariant when adding routes.
-- `static/style.css` - shared stylesheet (deck plus the homepage base). After
-  the recent redesign, pre-v3 hero/CTA, features, modules, CLI, deck warning,
-  and entrance-animation styles were dropped. Do not reintroduce dead selectors;
-  remove rather than comment out.
+- `static/style.css` - base stylesheet (reset and global rules), loaded before
+  `home.css`. After the recent redesign, pre-v3 hero/CTA, features, modules,
+  CLI, deck warning, and entrance-animation styles were dropped. Do not
+  reintroduce dead selectors; remove rather than comment out.
 - `static/home.css` - homepage-scoped styles, including the `.zp-*`
   proof-playground component.
 - `static/script.js` - progressive enhancement only. The page must work without
@@ -106,19 +104,19 @@ leave `:8000` bound or a browser session open between turns.
 ## Routing rules
 
 - `/` -> `static/index.html`
-- `/deck` -> `static/deck.html`
-- `/deck.html` -> 301 to `/deck` (canonical form)
+- `/deck`, `/deck.html` -> 301 to `/` (the pitch deck was removed; the redirect
+  keeps old links useful)
 - Any other unknown path -> serves `static/404.html` with status 404
-  (`main.ts:123-140`), a dedicated recovery page carrying `noindex`, not the
+  (`main.ts:122-140`), a dedicated recovery page carrying `noindex`, not the
   landing page. `tests/site_contract_test.ts:11-27` pins this. Keep the fallback
   when changing the catch-all.
 
 ## When adding a new page
 
 1. Create `static/<name>.html`.
-2. Add a route branch in `main.ts` if it needs a clean URL (mirror the `/deck`
-   pattern).
-3. Update `static/sitemap.xml` and any nav links in `index.html` / `deck.html`.
+2. Add a route branch in `main.ts` if it needs a clean URL (mirror the `/`
+   rewrite to `/index.html`).
+3. Update `static/sitemap.xml` and any nav links in `index.html`.
 4. Verify CSP still covers any new external origins.
 
 ## Out of scope

@@ -1,5 +1,11 @@
 # Plan 014: `static/script.js` is type-checked, and the mechanism is proven
 
+> **Superseded facts (plan 017, 2026-09-23)**: plan 017 deleted
+> `static/deck.html` and the deck code in `static/script.js` (the deck burger
+> call and the slide navigation block; the file went from 244 to 111 lines).
+> Every `deck.html` reference and every `script.js` line number below is void.
+> There is no second `script.js?v=` to keep in sync. Re-measure before editing.
+
 > **Executor instructions**: Follow this plan step by step. Run every
 > verification command and confirm the expected result before moving on. Touch
 > only the files listed as in scope. If any STOP condition occurs, stop and

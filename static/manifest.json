@@ -4,7 +4,7 @@
   "description": "zttp is a restricted TypeScript runtime in pure Zig. The compiler proves handler paths and guarantees on save, while zttp expert asks for missing context and repairs generated code against those diagnostics.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f4f7f1",
+  "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
     { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },

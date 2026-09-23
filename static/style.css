@@ -10,8 +10,6 @@
 }
 
 :root {
-  /* Height of the sticky .z-header; the scroll spy in script.js reads it. */
-  --nav-height: 72px;
   --z-bg: #fff;
   --z-bg-soft: #f7f7f8;
   --z-paper: #fff;

@@ -79,28 +79,29 @@ if (spySections.length && "IntersectionObserver" in globalThis) {
     const id = link.getAttribute("href").slice(1);
     if (!linkForId.has(id)) linkForId.set(id, link);
   });
-  // The 72 fallback mirrors --nav-height in static/style.css. Without it an
-  // unresolved custom property yields NaN, and IntersectionObserver rejects a
-  // NaN rootMargin by throwing.
-  const navHeightRaw = getComputedStyle(document.documentElement)
-    .getPropertyValue("--nav-height");
-  const navHeight = Number.parseInt(navHeightRaw, 10) || 72;
+  // A section is current while it crosses a thin line at the middle of the
+  // viewport. A ratio threshold would never fire for a section taller than
+  // the band, and a band that starts at the header still catches the tail of
+  // the previous section after an anchor jump. When several sections cross the
+  // line, the one whose link comes first in the nav wins; when none does, no
+  // link is active.
+  const inBand = new Set();
   // This is an optional indicator, so contain its failure rather than let it
   // surface as an uncaught error.
   try {
     const scrollSpy = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            spyLinks.forEach((link) => link.classList.remove("active"));
-            const active = linkForId.get(entry.target.id);
-            if (active) active.classList.add("active");
-          }
+          if (entry.isIntersecting) inBand.add(entry.target);
+          else inBand.delete(entry.target);
         });
+        const current = spySections.find((section) => inBand.has(section));
+        spyLinks.forEach((link) => link.classList.remove("active"));
+        if (current) linkForId.get(current.id)?.classList.add("active");
       },
       {
-        threshold: 0.3,
-        rootMargin: `${-navHeight}px 0px -60% 0px`,
+        threshold: 0,
+        rootMargin: "-50% 0px -49% 0px",
       },
     );
     spySections.forEach((section) => scrollSpy.observe(section));

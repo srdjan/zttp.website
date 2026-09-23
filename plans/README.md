@@ -13,25 +13,25 @@ plans cite.
 
 ## Execution order and status
 
-| Plan | Title                                                 | Priority | Effort | Depends on | Status                                               |
-| ---- | ----------------------------------------------------- | -------- | ------ | ---------- | ---------------------------------------------------- |
-| 001  | Playground fails closed on analyzer failure           | P1       | S      | —          | DONE                                                 |
-| 002  | Editor keydown respects `readonly` and releases focus | P1       | S      | —          | DONE (handler removed instead of hinted)             |
-| 003  | Tighten CSP to what the site actually loads           | P1       | S      | —          | DONE                                                 |
-| 004  | One failing enhancement cannot kill the rest          | P2       | S      | —          | DONE                                                 |
-| 005  | One `verify` task and a CI gate                       | P1       | S      | —          | DONE                                                 |
-| 006  | Type-check the client JavaScript for real             | P1       | S+     | 005        | SUPERSEDED by 014, 015, 016                          |
-| 007  | Test playground behavior, not source text             | P2       | M      | 005        | DONE (harness is 103 lines, past the ~80-line guard) |
-| 008  | Serve validators so HTML can revalidate               | P2       | M      | 005        | DONE (Step 3 cache dropped: serves stale under dev)  |
-| 009  | `aria-label`s land on elements that can carry them    | P3       | S      | —          | DONE                                                 |
-| 010  | Remove unreferenced media and its server support      | P3       | S      | 003        | DONE                                                 |
-| 011  | One truth for agent guidance                          | P2       | S      | 005, 010   | DONE                                                 |
-| 012  | Sitemap `lastmod` reflects the content                | P3       | S      | —          | DONE                                                 |
-| 013  | `.gitignore` protects a fresh clone                   | P3       | S      | 010        | DONE                                                 |
-| 014  | Type-check `static/script.js`                         | P2       | M      | —          | TODO                                                 |
-| 015  | Type-check `static/playground.js`                     | P2       | L      | 014        | TODO                                                 |
-| 016  | Check JavaScript by default                           | P3       | S      | 014, 015   | TODO                                                 |
-| 017  | Remove the deck and serve one stylesheet              | P2       | M      | —          | TODO                                                 |
+| Plan | Title                                                 | Priority | Effort | Depends on | Status                                                         |
+| ---- | ----------------------------------------------------- | -------- | ------ | ---------- | -------------------------------------------------------------- |
+| 001  | Playground fails closed on analyzer failure           | P1       | S      | —          | DONE                                                           |
+| 002  | Editor keydown respects `readonly` and releases focus | P1       | S      | —          | DONE (handler removed instead of hinted)                       |
+| 003  | Tighten CSP to what the site actually loads           | P1       | S      | —          | DONE                                                           |
+| 004  | One failing enhancement cannot kill the rest          | P2       | S      | —          | DONE                                                           |
+| 005  | One `verify` task and a CI gate                       | P1       | S      | —          | DONE                                                           |
+| 006  | Type-check the client JavaScript for real             | P1       | S+     | 005        | SUPERSEDED by 014, 015, 016                                    |
+| 007  | Test playground behavior, not source text             | P2       | M      | 005        | DONE (harness is 103 lines, past the ~80-line guard)           |
+| 008  | Serve validators so HTML can revalidate               | P2       | M      | 005        | DONE (Step 3 cache dropped: serves stale under dev)            |
+| 009  | `aria-label`s land on elements that can carry them    | P3       | S      | —          | DONE                                                           |
+| 010  | Remove unreferenced media and its server support      | P3       | S      | 003        | DONE                                                           |
+| 011  | One truth for agent guidance                          | P2       | S      | 005, 010   | DONE                                                           |
+| 012  | Sitemap `lastmod` reflects the content                | P3       | S      | —          | DONE                                                           |
+| 013  | `.gitignore` protects a fresh clone                   | P3       | S      | 010        | DONE                                                           |
+| 014  | Type-check `static/script.js`                         | P2       | M      | —          | TODO                                                           |
+| 015  | Type-check `static/playground.js`                     | P2       | L      | 014        | TODO                                                           |
+| 016  | Check JavaScript by default                           | P3       | S      | 014, 015   | TODO                                                           |
+| 017  | Remove the deck and serve one stylesheet              | P2       | M      | —          | DONE (spy offset fixed; tall-section spy miss is pre-existing) |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (reason) | REJECTED (reason)
 

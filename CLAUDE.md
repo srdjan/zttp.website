@@ -9,9 +9,8 @@ step, no framework.
 - Runtime: Deno (see `deno.json`). No npm, no bundler.
 - Server: single file `main.ts` - serves `static/` with security headers and
   301s the removed deck URLs to `/`.
-- Frontend: hand-written HTML, vanilla CSS (`static/style.css`,
-  `static/home.css`), vanilla JS (`static/script.js`, `static/playground.js`).
-  No framework, no build step.
+- Frontend: hand-written HTML, vanilla CSS (`static/style.css`), vanilla JS
+  (`static/script.js`, `static/playground.js`). No framework, no build step.
 - Hosting: Deno Deploy (`deno task deploy` runs `deno task verify` first, then
   `deployctl deploy --prod`).
 
@@ -20,12 +19,10 @@ step, no framework.
 - `main.ts` - HTTP server, CSP, content-type and cache-control rules. Edit here
   for routing or headers.
 - `static/index.html` - landing page.
-- `static/style.css` - base stylesheet (reset and global rules), loaded before
-  `home.css`. After the recent redesign, pre-v3 hero/CTA, features, modules,
-  CLI, deck warning, and entrance-animation styles were dropped. Do not
-  reintroduce dead selectors; remove rather than comment out.
-- `static/home.css` - homepage-scoped styles, including the `.zp-*`
-  proof-playground component.
+- `static/style.css` - the only stylesheet: reset, design tokens on `:root`, and
+  every homepage and 404 rule, including the `.zp-*` proof-playground component.
+  Page rules hang off the `body.zttp-home` class. Do not introduce dead
+  selectors; remove rather than comment out.
 - `static/script.js` - progressive enhancement only. The page must work without
   JS. On the homepage the no-JS contract is concrete: the playground editor
   ships `readonly` with a pre-rendered proof card, and `playground.js` adds the

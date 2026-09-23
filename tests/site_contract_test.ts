@@ -282,10 +282,10 @@ function responseIsRedirectTo(response: Response, location: string): boolean {
 }
 
 Deno.test("homepage is usable before enhancement", async () => {
-  const [home, script, homeCss] = await Promise.all([
+  const [home, script, css] = await Promise.all([
     source("static/index.html"),
     source("static/script.js"),
-    source("static/home.css"),
+    source("static/style.css"),
   ]);
 
   assert(home.includes('<html class="no-js"'), "homepage needs a no-js root");
@@ -298,11 +298,11 @@ Deno.test("homepage is usable before enhancement", async () => {
     "the shared controller must activate enhanced navigation",
   );
   assert(
-    homeCss.includes(".js .z-menu-button"),
+    css.includes(".js .z-menu-button"),
     "homepage must expose the mobile menu button only after enhancement",
   );
   assert(
-    homeCss.includes(".z-playground:not(.zp-js) .zp-tabs"),
+    css.includes(".z-playground:not(.zp-js) .zp-tabs"),
     "playground controls must stay hidden until their controller loads",
   );
 });
@@ -356,10 +356,10 @@ Deno.test("the editor registers no keydown handler at all", async () => {
 // remains is a stylesheet rule, and there is no mechanism here for computed
 // layout, so it stays a source contract.
 Deno.test("hidden diagnostics stay out of layout", async () => {
-  const homeCss = await source("static/home.css");
+  const css = await source("static/style.css");
 
   assert(
-    /\.zp-why\[hidden\]\s*\{[^}]*display:\s*none;?[^}]*\}/.test(homeCss),
+    /\.zp-why\[hidden\]\s*\{[^}]*display:\s*none;?[^}]*\}/.test(css),
     "hidden diagnostics must remain out of layout after a proven rerender",
   );
 });

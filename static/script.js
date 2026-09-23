@@ -79,12 +79,12 @@ if (spySections.length && "IntersectionObserver" in globalThis) {
     const id = link.getAttribute("href").slice(1);
     if (!linkForId.has(id)) linkForId.set(id, link);
   });
-  // The 56 fallback mirrors --nav-height in static/style.css. Without it an
+  // The 72 fallback mirrors --nav-height in static/style.css. Without it an
   // unresolved custom property yields NaN, and IntersectionObserver rejects a
   // NaN rootMargin by throwing.
   const navHeightRaw = getComputedStyle(document.documentElement)
     .getPropertyValue("--nav-height");
-  const navHeight = Number.parseInt(navHeightRaw, 10) || 56;
+  const navHeight = Number.parseInt(navHeightRaw, 10) || 72;
   // This is an optional indicator, so contain its failure rather than let it
   // surface as an uncaught error.
   try {

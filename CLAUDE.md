@@ -48,6 +48,8 @@ step, no framework.
 - `tests/playground_behavior_test.ts` - boots `static/playground.js` against a
   parsed homepage with in-memory doubles, and asserts on the rendered proof
   card. Test-only DOM; nothing here reaches the browser.
+- `tests/script_behavior_test.ts` - boots `static/script.js` the same way and
+  drives the nav scroll spy through an `IntersectionObserver` double.
 - `docs/` - design.md, plan.md, evolution-log.md, and solutions/. Reference
   these for product intent before reshaping copy or layout.
 

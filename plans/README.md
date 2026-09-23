@@ -31,6 +31,7 @@ plans cite.
 | 014  | Type-check `static/script.js`                         | P2       | M      | —          | TODO                                                 |
 | 015  | Type-check `static/playground.js`                     | P2       | L      | 014        | TODO                                                 |
 | 016  | Check JavaScript by default                           | P3       | S      | 014, 015   | TODO                                                 |
+| 017  | Remove the deck and serve one stylesheet              | P2       | M      | —          | TODO                                                 |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (reason) | REJECTED (reason)
 
@@ -58,6 +59,9 @@ Status values: TODO | IN PROGRESS | DONE | BLOCKED (reason) | REJECTED (reason)
   array that 015 depends on and proves the per-file pragma mechanism on the
   smaller file. 016 flips the global flag and is only safe once both files are
   already clean; running it first is precisely what stopped 006.
+- **017 invalidates 014's deck references.** 017 deletes `static/deck.html` and
+  the deck code in `static/script.js`. If 017 lands first, re-measure every line
+  number 014 cites; 017 adds a note to 014 saying so.
 
 ## Decisions resolved
 

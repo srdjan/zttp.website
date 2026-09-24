@@ -265,7 +265,10 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   }
 
   function render(result) {
+    // Both describe the source just analyzed. A lens re-render on tab switch
+    // reuses them instead of re-reading an editor that may have moved on.
     lastResult = result;
+    lastDeclaresProof = sourceDeclaresProof(editor.value);
     const ok = result && result.success === true;
     const proof = (result && result.proof) || null;
     const props = (proof && proof.properties) || {};
@@ -278,8 +281,6 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     const verdict = ok ? "PROVEN" : "BLOCKED";
     // Guarded so the aria-live region announces only on a real flip.
     if (cardVerdict.textContent !== verdict) cardVerdict.textContent = verdict;
-    // Cached beside lastResult so a lens re-render on tab switch reuses it.
-    lastDeclaresProof = sourceDeclaresProof(editor.value);
     cardCount.textContent = proofScopeSummary(proof);
     cardScope.textContent = proof && proof.properties
       ? provenCount + "/" + PROPS.length + " analyzed properties hold"
@@ -790,8 +791,13 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     });
   }
 
+  // Reset shows only while the playground is live and the source has left
+  // the seed. It is never disabled, so this predicate is its only guard.
   function syncResetVisibility() {
-    if (resetButton) resetButton.hidden = editor.value === activeSeed;
+    if (resetButton) {
+      resetButton.hidden = section.dataset.state !== "live" ||
+        editor.value === activeSeed;
+    }
   }
 
   // Swap the editor to a perturbation variant - or back to the seed when
@@ -975,6 +981,16 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (s.className !== cls) s.className = cls;
   }
 
+  // Loading and unavailable replace the verdict with a placeholder and idle
+  // the live dot until a proof runs.
+  function showPlaceholder(kind, verdict, count, scope) {
+    cardHead.className = "zp-head zp-" + kind;
+    cardVerdict.textContent = verdict;
+    cardCount.textContent = count;
+    cardScope.textContent = scope;
+    cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
+  }
+
   function setPlaygroundState(state) {
     section.dataset.state = state;
     card.classList.toggle("zp-live", state === "live");
@@ -985,9 +1001,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     perturbBtns.forEach((button) => (button.disabled = !interactive));
     seedTabs.forEach((button) => (button.disabled = !interactive));
     if (demoReplay) demoReplay.disabled = !interactive;
-    if (resetButton) {
-      resetButton.hidden = !interactive || editor.value === activeSeed;
-    }
+    syncResetVisibility();
     if (retryButton) retryButton.hidden = state !== "unavailable";
 
     if (state === "static") {
@@ -997,13 +1011,12 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     }
 
     if (state === "loading") {
-      cardHead.className = "zp-head zp-loading";
-      cardVerdict.textContent = "LOADING";
-      cardCount.textContent = "proof pending";
-      cardScope.textContent = "analyzed properties pending";
-      if (cardLiveDot) {
-        cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
-      }
+      showPlaceholder(
+        "loading",
+        "LOADING",
+        "proof pending",
+        "analyzed properties pending",
+      );
       setStatus("loading proof engine...", "");
       setDemoState("loading proof engine");
       return;
@@ -1011,13 +1024,12 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
 
     if (state === "unavailable") {
       clearDemoTimers();
-      cardHead.className = "zp-head zp-unavailable";
-      cardVerdict.textContent = "UNAVAILABLE";
-      cardCount.textContent = "proof not run";
-      cardScope.textContent = "analyzed properties unavailable";
-      if (cardLiveDot) {
-        cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
-      }
+      showPlaceholder(
+        "unavailable",
+        "UNAVAILABLE",
+        "proof not run",
+        "analyzed properties unavailable",
+      );
       cardWhy.hidden = true;
       setStatus(
         "proof engine unavailable - install zttp to try it locally",
@@ -1027,9 +1039,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       return;
     }
 
-    if (cardLiveDot) {
-      cardLiveDot.className = "z-status-dot z-dot-safe zp-live-dot";
-    }
+    cardLiveDot.className = "z-status-dot z-dot-safe zp-live-dot";
   }
 
   async function boot() {

@@ -95,6 +95,10 @@ leave `:8000` bound or a browser session open between turns.
 - CSS: redesign is current. Recent commits have been pruning pre-redesign rules
   (see `git log --oneline`). When touching styles, prefer deletion over
   additions; if a selector has no matching markup, drop it.
+- Positioning: zttp is an agent-compiler, meaning the compiler is itself an
+  agent that co-authors code (it repairs drafts with no model call). Never
+  describe it as "a compiler for agents"; that is the opposite claim. Define the
+  term wherever it appears (see STRATEGY.md in the zttp repo).
 - No emojis in source, copy, or commit messages. No em dashes - use hyphens or
   colons.
 - Prefer editing existing files over creating new ones. New top-level files

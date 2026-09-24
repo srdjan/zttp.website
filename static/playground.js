@@ -291,8 +291,11 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     renderLens(activeLens);
   }
 
+  // Strip block and line comments, then match `Proof<` as a whole word so a
+  // commented-out Proof or an identifier like `NotAProof<T>` does not count.
   function sourceDeclaresProof(source) {
-    return /Proof\s*</.test(source.replace(/\/\/[^\n]*/g, ""));
+    const code = source.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
+    return /\bProof\s*</.test(code);
   }
 
   function undischargedSpecs(proof) {
@@ -733,17 +736,21 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (!wasm) return;
     const t0 = performance.now();
     let result = null;
+    let elapsed = 0;
+    // render() sits inside the try: valid JSON of an unexpected shape can
+    // throw after the verdict is written, and that must fail closed too.
     try {
       result = analyze(editor.value);
+      elapsed = performance.now() - t0;
+      if (result) render(result);
     } catch (err) {
-      console.error("playground: analyzer call failed", err);
+      console.error("playground: analysis failed", err);
+      result = null;
     }
-    const elapsed = performance.now() - t0;
     if (!result) {
       setPlaygroundState("unavailable");
       return;
     }
-    render(result);
     setStatus("proved in " + fmtMs(elapsed), "");
   }
 
@@ -789,9 +796,12 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
 
   // Swap the editor to a perturbation variant - or back to the seed when
   // `kind` is null - sync the button states, and re-prove. Shared by the
-  // buttons and the sample replay. A direct editor.value write does not fire an
-  // `input` event, so this never trips the engage() interaction guard.
+  // buttons, Reset, the seed tabs, and the sample replay. The swap proves the
+  // new source at once, so a pending debounced analysis of the replaced text is
+  // cancelled. A direct editor.value write does not fire an `input` event, so
+  // this never trips the engage() interaction guard.
   function applyPerturb(kind) {
+    clearTimeout(debounce);
     setPerturbState(kind);
     editor.value = kind ? (VARIANTS[kind] || activeSeed) : activeSeed;
     syncResetVisibility();
@@ -810,7 +820,6 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   if (resetButton) {
     resetButton.addEventListener("click", () => {
       engage();
-      clearTimeout(debounce);
       openChipKey = null;
       applyPerturb(null);
       setDemoState("example reset");
@@ -1027,6 +1036,9 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (
       section.dataset.state === "loading" || section.dataset.state === "live"
     ) return;
+    // A retry can follow a failed sample; release it with the seed.
+    setPerturbState(null);
+    openChipKey = null;
     editor.value = activeSeed;
     syncHighlight();
     setPlaygroundState("loading");

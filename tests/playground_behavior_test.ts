@@ -587,6 +587,97 @@ Deno.test("malformed analyzer output cannot leave a proven verdict", async () =>
   );
 });
 
+Deno.test("an envelope of unexpected shape cannot leave a proven verdict", async () => {
+  const page = load({
+    analyzer: () =>
+      JSON.stringify({
+        success: true,
+        proof: {
+          declared_specs: ["deterministic"],
+          spec_diagnostics: [null],
+          properties: { deterministic: true },
+        },
+        diagnostics: [],
+      }),
+  });
+  await page.boot();
+
+  assert(
+    page.text(".zp-verdict") === "UNAVAILABLE",
+    "a render that cannot read the envelope must fail closed",
+  );
+  assert(page.state() === "unavailable", "the section must fail closed");
+});
+
+Deno.test("only a real Proof<T, P> declaration counts as declared", async () => {
+  const page = load({ analyzer: sourceAwareAnalyzer });
+  await page.boot();
+  page.click('[data-seed="default"]');
+  const seed = page.editor.value;
+
+  for (
+    const extra of [
+      "/* Proof<T, P> is optional */\n",
+      "type NotAProof<T> = T;\n",
+    ]
+  ) {
+    page.input(seed + extra);
+    page.runTimers();
+    assert(
+      page.text(".zp-count") === "strict default: full proof profile required",
+      `${extra.trim()} must not read as a declared Proof`,
+    );
+  }
+});
+
+Deno.test("a retry after a failed sample restores the seed controls", async () => {
+  const page = load({
+    analyzer: (source) =>
+      source.includes("Date.now()") ? null : PROVEN_ENVELOPE,
+  });
+  await page.boot();
+
+  page.click('[data-perturb="datenow"]');
+  assert(page.state() === "unavailable", "the failed sample must fail closed");
+
+  page.click(".zp-retry");
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert(page.state() === "live", "a retry must reach the live state");
+  assert(
+    !page.editor.value.includes("Date.now()"),
+    "a retry must restore the seed source",
+  );
+  assert(
+    page.doc.querySelector('[data-perturb="datenow"]')?.getAttribute(
+          "aria-pressed",
+        ) === "false" &&
+      page.text('[data-perturb="datenow"]') === "Inject Date.now()",
+    "a retry must release the sample the seed no longer shows",
+  );
+});
+
+Deno.test("a source swap cancels the pending edit analysis", async () => {
+  let calls = 0;
+  const page = load({
+    analyzer: (source) => {
+      calls += 1;
+      return sourceAwareAnalyzer(source);
+    },
+  });
+  await page.boot();
+
+  page.input(page.editor.value + "// visitor edit\n");
+  page.click('[data-seed="default"]');
+  const afterSwap = calls;
+  page.runTimers();
+
+  assert(
+    calls === afterSwap,
+    "a debounced analysis of replaced text must not run again",
+  );
+});
+
 Deno.test("a load failure clears the pre-rendered verdict", async () => {
   const page = load({ wasmLoads: false });
   await page.boot();

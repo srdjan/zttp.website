@@ -103,7 +103,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=21">
+    <link rel="stylesheet" href="/style.css?v=22">
   </head>
   <body class="zttp-home">
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -170,6 +170,14 @@
               sh</code>
             <button type="button" id="copy-install">Copy</button>
           </div>
+          <p class="z-install-note">
+            macOS and Linux, x86-64 and ARM64.
+            <a
+              href="https://github.com/srdjan/zttp/blob/main/install.sh"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Inspect the install script</a> before you run it.
+          </p>
         </div>
 
         <figure class="z-product-shot">
@@ -207,7 +215,7 @@
           <p>
             Edit the handler or inject a failure. The WebAssembly analyzer
             returns the failed property, file, and line. Your source stays in
-            the page.
+            the page. Sample repairs replay known compiler plans.
           </p>
         </div>
 
@@ -246,56 +254,62 @@
                 aria-controls="zp-editor-panel"
                 tabindex="-1"
               >
-                No Proof (all enforced)
+                No Proof (starts blocked)
               </button>
             </div>
             <div class="zp-toolbar">
               <span class="zp-file">
                 <span class="z-status-dot z-dot-idle"></span> handler.ts
               </span>
-              <div
-                class="zp-perturbations"
-                role="group"
-                aria-label="Perturbations"
-              >
-                <button
-                  type="button"
-                  data-perturb="datenow"
-                  data-label="Inject Date.now()"
-                  data-revert-label="Revert Date.now()"
-                  aria-pressed="false"
-                >
-                  Inject Date.now()
-                </button>
-                <button
-                  type="button"
-                  data-perturb="secret"
-                  data-label="Leak a secret"
-                  data-revert-label="Undo secret leak"
-                  aria-pressed="false"
-                >
-                  Leak a secret
-                </button>
-                <button
-                  type="button"
-                  data-perturb="while"
-                  data-label="Add a while loop"
-                  data-revert-label="Remove while loop"
-                  aria-pressed="false"
-                >
-                  Add a while loop
-                </button>
-              </div>
               <div class="zp-demo-controls">
+                <button type="button" class="zp-demo-replay">
+                  Run proof and repair sample
+                </button>
                 <span class="zp-demo-state" aria-live="polite"
                 >proof engine idle</span>
-                <button type="button" class="zp-demo-replay">
-                  Replay sample flip
-                </button>
                 <button type="button" class="zp-retry" hidden>
                   Retry proof engine
                 </button>
               </div>
+              <button type="button" class="zp-reset" hidden>
+                Reset example
+              </button>
+              <details class="zp-more-examples">
+                <summary>More failure examples</summary>
+                <div
+                  class="zp-perturbations"
+                  role="group"
+                  aria-label="Perturbations"
+                >
+                  <button
+                    type="button"
+                    data-perturb="datenow"
+                    data-label="Inject Date.now()"
+                    data-revert-label="Revert Date.now()"
+                    aria-pressed="false"
+                  >
+                    Inject Date.now()
+                  </button>
+                  <button
+                    type="button"
+                    data-perturb="secret"
+                    data-label="Leak a secret"
+                    data-revert-label="Undo secret leak"
+                    aria-pressed="false"
+                  >
+                    Leak a secret
+                  </button>
+                  <button
+                    type="button"
+                    data-perturb="while"
+                    data-label="Add a while loop"
+                    data-revert-label="Remove while loop"
+                    aria-pressed="false"
+                  >
+                    Add a while loop
+                  </button>
+                </div>
+              </details>
             </div>
             <div
               class="zp-editor"
@@ -333,7 +347,8 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
           <figure class="zp-card zp-ok" id="zp-card">
             <div class="zp-head zp-ok">
               <span class="zp-verdict" aria-live="polite">PROVEN</span>
-              <strong class="zp-count">3/3 specs | 6/7 props</strong>
+              <strong class="zp-count">3/3 declared specs</strong>
+              <span class="zp-scope">6/7 analyzed properties hold</span>
               <span class="zp-live-readout">
                 <span
                   class="z-status-dot z-dot-safe zp-live-dot"
@@ -691,6 +706,14 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
             sh</code>
           <button type="button" id="copy-install-cta">Copy</button>
         </div>
+        <p class="z-install-note">
+          macOS and Linux, x86-64 and ARM64.
+          <a
+            href="https://github.com/srdjan/zttp/blob/main/install.sh"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Inspect the install script</a> before you run it.
+        </p>
 
         <div class="z-first-proof">
           <pre><code><span class="z-cmd">zttp</span> init api --template api
@@ -744,6 +767,6 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
     </footer>
 
     <script src="/script.js?v=18" defer></script>
-    <script src="/playground.js?v=17" defer></script>
+    <script src="/playground.js?v=18" defer></script>
   </body>
 </html>

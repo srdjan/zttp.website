@@ -32,6 +32,7 @@ plans cite.
 | 015  | Type-check `static/playground.js`                     | P2       | L      | 014        | TODO                                                 |
 | 016  | Check JavaScript by default                           | P3       | S      | 014, 015   | TODO                                                 |
 | 017  | Remove the deck and serve one stylesheet              | P2       | M      | —          | DONE (tall-section spy miss fixed after)             |
+| 018  | Fix homepage proof and install UX audit findings      | P1       | M      | —          | DONE                                                 |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (reason) | REJECTED (reason)
 

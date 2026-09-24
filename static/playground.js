@@ -26,8 +26,8 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   const RETURN_LINE = "  return Response.json({ ok: true });";
 
   const SEED_DEFAULT = [
-    "// No Proof<T, P> here, so every guarantee is enforced by",
-    "// default. Break one below and the card flips red.",
+    "// No Proof<T, P>: the strict default enforces every guarantee.",
+    "// This example starts blocked until every obligation is discharged.",
     "function handler(req: Request): Response {",
     RETURN_LINE,
     "}",
@@ -49,16 +49,15 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     "",
   ].join("\n");
 
-  // Each perturbation has one known inverse, so the repair the card offers is
-  // a replay of the typed repair plan the compiler composes for that
-  // diagnostic - not live synthesis. The demo runs entirely in this page, so
-  // "zero model calls" is literally true of it. Keep `intent` and `edit` in
-  // step with the repair intents the analyzer emits for these rules.
+  // Each perturbation has one known inverse. The card replays that fixed sample
+  // repair after the live analyzer reports its diagnostic. It does not
+  // synthesize a repair in the browser. Keep `intent` and `edit` in step with
+  // the source that applyPerturb restores for each sample.
   const REPAIR_PLANS = {
     datenow: {
       property: "deterministic",
-      intent: "hoist-nondeterminism",
-      edit: "drop Date.now(); take the timestamp from the request",
+      intent: "remove-nondeterminism",
+      edit: "restore the seed by removing Date.now() and the stamp field",
     },
     secret: {
       property: "no_secret_leakage",
@@ -77,7 +76,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     return {
       datenow: seed.replace(
         RETURN_LINE,
-        "  const stamp = Date.now();\n  return Response.json({ ok: true, stamp });",
+        "  const stamp = Date.now();\n  return Response.json({ ok: true, stamp: stamp });",
       ),
       secret: ('import { env } from "zttp:env";\n' + seed).replace(
         RETURN_LINE,
@@ -239,6 +238,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   const cardHead = card.querySelector(".zp-head");
   const cardVerdict = card.querySelector(".zp-verdict");
   const cardCount = card.querySelector(".zp-count");
+  const cardScope = card.querySelector(".zp-scope");
   const cardWhy = card.querySelector(".zp-why");
   const cardChips = card.querySelector(".zp-chips");
   const cardSpecs = card.querySelector(".zp-specs");
@@ -277,11 +277,14 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     const verdict = ok ? "PROVEN" : "BLOCKED";
     // Guarded so the aria-live region announces only on a real flip.
     if (cardVerdict.textContent !== verdict) cardVerdict.textContent = verdict;
-    cardCount.textContent = proofSummary(
-      provenCount,
-      proof,
-      editor.value,
-    );
+    const proofScope = proofScopeSummary(proof, editor.value);
+    const propertyScope = proof && proof.properties
+      ? provenCount + "/" + PROPS.length + " analyzed properties hold"
+      : "properties were not evaluated";
+    cardCount.textContent = cardScope
+      ? proofScope
+      : proofScope + " | " + propertyScope;
+    if (cardScope) cardScope.textContent = propertyScope;
 
     // The verdict header and Why row are always visible; only the active
     // lens pane needs rebuilding. The other panes render on tab switch.
@@ -293,18 +296,18 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     return /Proof\s*</.test(source.replace(/\/\/[^\n]*/g, ""));
   }
 
-  function proofSummary(provenCount, proof, source) {
-    if (!proof) return "proof blocked before props";
+  function proofScopeSummary(proof, source) {
+    if (!proof) return "proof blocked before properties";
     const declaresProof = sourceDeclaresProof(source);
     const specs = (proof && proof.declared_specs) || [];
     const specDiagnostics = (proof && proof.spec_diagnostics) || [];
-    if (declaresProof && specs.length) {
+    if (declaresProof) {
+      if (!specs.length) return "declared proof blocked";
       const undischarged = new Set(specDiagnostics.map((d) => d.spec_name));
       const provenSpecs = specs.filter((s) => !undischarged.has(s)).length;
-      return provenSpecs + "/" + specs.length + " specs | " +
-        provenCount + "/" + PROPS.length + " props";
+      return provenSpecs + "/" + specs.length + " declared specs proven";
     }
-    return "all enforced | " + provenCount + "/" + PROPS.length + " props";
+    return "strict default: full proof profile required";
   }
 
   // Rebuild one lens pane from the cached last result. The Caller view is
@@ -496,14 +499,32 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     const row = el("div", "zp-why-row");
     row.appendChild(el("span", "zp-status-dot z-dot-blocked"));
     row.appendChild(el("code", "zp-why-code", d.code));
-    row.appendChild(el("span", "zp-why-msg", d.message));
+    const strictDefaultFailure = d.code === "ZTS500" &&
+      !sourceDeclaresProof(editor.value);
+    row.appendChild(el(
+      "span",
+      "zp-why-msg",
+      strictDefaultFailure
+        ? "Strict default could not prove every required guarantee."
+        : d.message,
+    ));
     if (d.line) {
       row.appendChild(el("code", "zp-why-loc", "handler.ts:" + d.line));
     }
-    if (d.suggestion) {
+    if (d.suggestion && !strictDefaultFailure) {
       row.appendChild(el("span", "zp-why-fix", "fix: " + d.suggestion));
     }
     why.appendChild(row);
+
+    if (strictDefaultFailure) {
+      const details = el("details", "zp-guidance");
+      details.appendChild(el("summary", undefined, "Full analyzer guidance"));
+      details.appendChild(el("p", "zp-guidance-text", d.message));
+      if (d.suggestion) {
+        details.appendChild(el("p", "zp-guidance-text", d.suggestion));
+      }
+      why.appendChild(details);
+    }
 
     // The playground reports the analyzer's verdict. The veto is what the
     // agent loop does with that verdict, so it is stated as a consequence
@@ -521,7 +542,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       const btn = el(
         "button",
         "zp-repair",
-        "Compiler repair: apply typed plan",
+        "Replay this example's known repair",
       );
       btn.type = "button";
       btn.addEventListener("click", applyCompilerRepair);
@@ -529,12 +550,11 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     }
   }
 
-  // Render the typed repair plan the compiler would compose for the active
-  // diagnostic. Labelled as a replay so the card never implies the plan was
-  // synthesised in the browser.
+  // Render the known inverse for the active sample. The browser replays this
+  // fixed example after the live analyzer reports its diagnostic.
   function renderPlan(plan) {
     const box = el("div", "zp-plan");
-    box.appendChild(el("span", "zp-plan-tag", "typed repair plan (replay)"));
+    box.appendChild(el("span", "zp-plan-tag", "known example repair (replay)"));
     const rows = [
       ["property", plan.property],
       ["intent", plan.intent],
@@ -691,14 +711,17 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
 
   const copyBtn = card.querySelector(".zp-copy");
   if (copyBtn) {
-    copyBtn.addEventListener("click", () => {
+    const copyLabel = copyBtn.textContent;
+    copyBtn.addEventListener("click", async () => {
       const text = cardCert.textContent;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-          copyBtn.textContent = "Copied";
-          setTimeout(() => (copyBtn.textContent = "Copy certificate"), 1400);
-        });
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = "Copied";
+      } catch {
+        globalThis.prompt("Copy proof certificate", text);
+        copyBtn.textContent = "Copy manually";
       }
+      setTimeout(() => (copyBtn.textContent = copyLabel), 1400);
     });
   }
 
@@ -729,6 +752,10 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
 
   function scheduleAnalysis() {
     engage();
+    if (activePerturb && editor.value !== VARIANTS[activePerturb]) {
+      setPerturbState(null);
+    }
+    syncResetVisibility();
     syncHighlight();
     clearTimeout(debounce);
     debounce = setTimeout(runAnalysis, 160);
@@ -745,23 +772,32 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   // --- perturbation buttons ----------------------------------------------
   let activePerturb = null;
   const perturbBtns = section.querySelectorAll("[data-perturb]");
+  const resetButton = section.querySelector(".zp-reset");
 
-  // Swap the editor to a perturbation variant - or back to the seed when
-  // `kind` is null - sync the button states, and re-prove. Shared by the
-  // buttons and the auto-demo. A direct editor.value write does not fire an
-  // `input` event, so this never trips the engage() interaction guard.
-  function applyPerturb(kind) {
+  function setPerturbState(kind) {
     activePerturb = kind;
-    editor.value = kind ? (VARIANTS[kind] || activeSeed) : activeSeed;
     perturbBtns.forEach((b) => {
-      const k = b.getAttribute("data-perturb");
-      const active = k === kind;
+      const active = b.getAttribute("data-perturb") === kind;
       b.classList.toggle("active", active);
       b.setAttribute("aria-pressed", String(active));
       b.textContent = active
         ? (b.getAttribute("data-revert-label") || "Revert")
         : b.getAttribute("data-label");
     });
+  }
+
+  function syncResetVisibility() {
+    if (resetButton) resetButton.hidden = editor.value === activeSeed;
+  }
+
+  // Swap the editor to a perturbation variant - or back to the seed when
+  // `kind` is null - sync the button states, and re-prove. Shared by the
+  // buttons and the sample replay. A direct editor.value write does not fire an
+  // `input` event, so this never trips the engage() interaction guard.
+  function applyPerturb(kind) {
+    setPerturbState(kind);
+    editor.value = kind ? (VARIANTS[kind] || activeSeed) : activeSeed;
+    syncResetVisibility();
     syncHighlight();
     runAnalysis();
   }
@@ -773,6 +809,16 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       applyPerturb(activePerturb === kind ? null : kind);
     });
   });
+
+  if (resetButton) {
+    resetButton.addEventListener("click", () => {
+      engage();
+      clearTimeout(debounce);
+      openChipKey = null;
+      applyPerturb(null);
+      setDemoState("example reset");
+    });
+  }
 
   // Show the plan, hold it long enough to read, then land the edit. The hold
   // goes through demoTimers/demoRunId like every other scheduled beat, so a
@@ -787,11 +833,11 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     engage();
     const runId = demoRunId;
     renderPlan(plan);
-    setStatus("applying typed repair plan...", "");
+    setStatus("replaying this example's known repair...", "");
     demoTimers.push(setTimeout(() => {
       if (runId !== demoRunId) return;
       applyPerturb(null);
-      setStatus("edit recorded: compiler-authored", "");
+      setStatus("known example repair replayed", "");
       demoTimers = [];
     }, REPAIR_APPLY_MS));
   }
@@ -806,14 +852,10 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   function selectSeed(which) {
     activeSeed = which === "proof" ? SEED_PROOF : SEED_DEFAULT;
     VARIANTS = variantsFor(activeSeed);
-    activePerturb = null;
-    perturbBtns.forEach((b) => {
-      b.classList.remove("active");
-      b.setAttribute("aria-pressed", "false");
-      b.textContent = b.getAttribute("data-label");
-    });
+    setPerturbState(null);
     openChipKey = null;
     editor.value = activeSeed;
+    syncResetVisibility();
     syncHighlight();
     runAnalysis();
   }
@@ -834,14 +876,13 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
 
   wireTabs(seedTabs, selectSeedTab);
 
-  // --- attract demo -------------------------------------------------------
-  // Until the visitor touches the playground, run one scripted proof flip so
-  // a passive scroll-by sees the card move on its own. Any interaction - or a
-  // reduced-motion preference - cancels it.
+  // --- sample replay ------------------------------------------------------
+  // Run the scripted proof flip only after the visitor requests it. Any later
+  // interaction cancels the remaining replay steps.
   const DEMO_INJECT_MS = 1400;
-  // Offsets from the injection, in order: the proof trace unfurls, the typed
-  // repair plan appears, then the compiler-authored edit lands. The demo ends
-  // green on the seed, which is also its own reset.
+  // Offsets from the injection, in order: the proof trace opens, the known
+  // repair appears, then the seed source returns. The replay ends green on the
+  // seed, which is also its own reset.
   const DEMO_TRACE_OPEN_MS = 560;
   const DEMO_PLAN_MS = 1500;
   const DEMO_REPAIR_MS = 2400;
@@ -856,17 +897,10 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (demoState) demoState.textContent = text;
   }
 
-  function clearHints() {
-    section.querySelectorAll(".zp-hint").forEach((b) =>
-      b.classList.remove("zp-hint")
-    );
-  }
-
   function clearDemoTimers() {
     demoRunId += 1;
     demoTimers.forEach(clearTimeout);
     demoTimers = [];
-    clearHints();
   }
 
   // Any real interaction cancels pending demo work, including a replay that
@@ -879,20 +913,24 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (hadDemoTimers || firstInteraction) setDemoState("manual control");
   }
 
-  function runProofFlipDemo(manual) {
-    if (reduceMotion) {
-      setDemoState("motion reduced");
-      return;
-    }
-    if (!manual && userEngaged) return;
+  function runProofFlipDemo() {
     clearDemoTimers();
+    if (activeSeed !== SEED_PROOF) {
+      const proofTab = seedTabs.find((tab) =>
+        tab.getAttribute("data-seed") === "proof"
+      );
+      if (proofTab) selectSeedTab(proofTab);
+    }
     const runId = demoRunId;
-    setDemoState(manual ? "replaying sample flip" : "auto demo running");
-    const datenowBtn = section.querySelector('[data-perturb="datenow"]');
+    setDemoState(
+      reduceMotion
+        ? "replaying sample flip without animation"
+        : "replaying sample flip",
+    );
     demoTimers.push(setTimeout(() => {
       if (runId !== demoRunId) return;
-      if (datenowBtn) datenowBtn.classList.add("zp-hint");
       applyPerturb("datenow");
+      setDemoState("Date.now sample blocked");
     }, DEMO_INJECT_MS));
     // Unfurl the broken proof's trace so a passive viewer sees the
     // counterexample, not just a red chip.
@@ -901,32 +939,28 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       openChipKey = "deterministic";
       renderLens("properties");
     }, DEMO_INJECT_MS + DEMO_TRACE_OPEN_MS));
-    // Then the payoff the thesis turns on: the compiler writes the fix.
+    // Then show the known sample repair before replaying its fixed source.
     demoTimers.push(setTimeout(() => {
       if (runId !== demoRunId) return;
       const plan = REPAIR_PLANS.datenow;
       if (plan) renderPlan(plan);
-      setStatus("applying typed repair plan...", "");
+      setStatus("replaying this example's known repair...", "");
+      setDemoState("showing known repair replay");
     }, DEMO_INJECT_MS + DEMO_PLAN_MS));
     demoTimers.push(setTimeout(() => {
       if (runId !== demoRunId) return;
-      clearHints();
       openChipKey = null;
       applyPerturb(null);
-      setStatus("edit recorded: compiler-authored", "");
+      setStatus("known example repair replayed", "");
       demoTimers = [];
-      setDemoState(manual ? "sample reset" : "auto demo complete");
+      setDemoState("sample reset");
     }, DEMO_INJECT_MS + DEMO_REPAIR_MS));
-  }
-
-  function autoDemo() {
-    runProofFlipDemo(false);
   }
 
   if (demoReplay) {
     demoReplay.addEventListener("click", () => {
       userEngaged = true;
-      runProofFlipDemo(true);
+      runProofFlipDemo();
     });
   }
 
@@ -949,6 +983,11 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     perturbBtns.forEach((button) => (button.disabled = !interactive));
     seedTabs.forEach((button) => (button.disabled = !interactive));
     if (demoReplay) demoReplay.disabled = !interactive;
+    if (resetButton) {
+      resetButton.disabled = !interactive;
+      if (interactive) syncResetVisibility();
+      else resetButton.hidden = true;
+    }
     if (retryButton) retryButton.hidden = state !== "unavailable";
 
     if (state === "static") {
@@ -961,6 +1000,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       cardHead.className = "zp-head zp-loading";
       cardVerdict.textContent = "LOADING";
       cardCount.textContent = "proof pending";
+      if (cardScope) cardScope.textContent = "analyzed properties pending";
       if (cardLiveDot) {
         cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
       }
@@ -974,6 +1014,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       cardHead.className = "zp-head zp-unavailable";
       cardVerdict.textContent = "UNAVAILABLE";
       cardCount.textContent = "proof not run";
+      if (cardScope) cardScope.textContent = "analyzed properties unavailable";
       if (cardLiveDot) {
         cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
       }
@@ -1012,7 +1053,6 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     setPlaygroundState("live");
     runAnalysis();
     setDemoState("proof engine ready");
-    autoDemo();
   }
 
   if (retryButton) retryButton.addEventListener("click", boot);

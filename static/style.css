@@ -105,6 +105,10 @@ code {
   min-height: 2.75rem;
 }
 
+.zttp-home details:not([open]) > :not(summary) {
+  display: none;
+}
+
 .zttp-home img {
   display: block;
   max-width: 100%;
@@ -469,6 +473,19 @@ code {
 .z-install-card button:hover {
   border-color: var(--z-accent);
   color: var(--z-accent);
+}
+
+.z-install-note {
+  max-width: 46rem;
+  margin-top: 0.55rem;
+  color: var(--z-muted);
+  font-size: 0.82rem;
+}
+
+.z-install-note a {
+  color: var(--z-accent-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
 }
 
 .z-product-shot {
@@ -942,6 +959,14 @@ code {
   color: var(--z-accent-light);
 }
 
+.z-final-cta > .z-install-note {
+  margin-top: 0.55rem;
+}
+
+.z-final-cta .z-install-note a {
+  color: var(--z-accent-light);
+}
+
 .z-first-proof {
   max-width: 44rem;
   margin: 1rem auto 0;
@@ -1340,7 +1365,7 @@ code {
 }
 
 .z-playground:not(.zp-js) .zp-tabs,
-.z-playground:not(.zp-js) .zp-perturbations,
+.z-playground:not(.zp-js) .zp-more-examples,
 .z-playground:not(.zp-js) .zp-demo-controls,
 .z-playground:not(.zp-js) .zp-lensbar,
 .z-playground:not(.zp-js) .zp-copy {
@@ -1424,6 +1449,22 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  margin-top: 0.45rem;
+}
+
+.zp-more-examples {
+  flex-basis: 100%;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  padding-top: 0.4rem;
+  color: #cbd7e3;
+  font-family: var(--z-mono);
+  font-size: 0.72rem;
+}
+
+.zp-more-examples summary {
+  min-height: 2.75rem;
+  cursor: pointer;
+  line-height: 2.75rem;
 }
 
 .zp-perturbations button {
@@ -1444,7 +1485,8 @@ code {
 }
 
 .zp-demo-replay,
-.zp-retry {
+.zp-retry,
+.zp-reset {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
@@ -1455,6 +1497,13 @@ code {
   font-family: var(--z-mono);
   font-size: 0.72rem;
   cursor: pointer;
+}
+
+.zp-demo-replay {
+  border-color: var(--z-accent);
+  background: var(--z-accent);
+  color: #fff;
+  font-weight: 700;
 }
 
 .zp-demo-state {
@@ -1469,20 +1518,27 @@ code {
   color: #fff;
 }
 
-.zp-demo-replay:hover,
-.zp-retry:hover {
+.zp-retry:hover,
+.zp-reset:hover {
   background: rgb(243 141 181 / 0.18);
   color: #fff;
 }
 
+.zp-demo-replay:hover {
+  border-color: var(--z-accent-dark);
+  background: var(--z-accent-dark);
+}
+
 .zp-perturbations button:disabled,
 .zp-demo-replay:disabled,
+.zp-reset:disabled,
 .zp-tab:disabled {
   cursor: not-allowed;
   opacity: 0.48;
 }
 
-.zp-retry[hidden] {
+.zp-retry[hidden],
+.zp-reset[hidden] {
   display: none;
 }
 
@@ -1566,6 +1622,7 @@ code {
 
 .zp-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 0.7rem;
   padding: 0.95rem 1.15rem;
@@ -1611,6 +1668,13 @@ code {
   font-weight: 500;
 }
 
+.zp-scope {
+  order: 3;
+  flex-basis: 100%;
+  color: #a8b2be;
+  font-size: 0.7rem;
+}
+
 .zp-live-readout {
   margin-left: auto;
   display: inline-flex;
@@ -1653,22 +1717,6 @@ code {
 
 .zp-status-warn {
   color: #e8c06b;
-}
-
-/* Pulsing outline drawn on a perturbation button during the attract demo. */
-.zp-perturbations button.zp-hint {
-  border-color: var(--z-red);
-  animation: zp-hint-pulse 1.1s ease-in-out infinite;
-}
-
-@keyframes zp-hint-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgb(255 132 151 / 0);
-  }
-  50% {
-    box-shadow: 0 0 0 5px rgb(255 132 151 / 0.24);
-  }
 }
 
 .z-playground .z-section-kicker .z-status-dot {
@@ -2161,9 +2209,30 @@ button.zp-chip {
   color: #8e99a6;
 }
 
+.zp-guidance {
+  max-width: 100%;
+  color: #cbd7e3;
+}
+
+.zp-guidance summary {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.zp-guidance-text {
+  overflow-wrap: anywhere;
+  margin-top: 0.45rem;
+  color: #a8b2be;
+}
+
 @media (max-width: 880px) {
   .z-playground .zp-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .zp-editor-col:has(#zp-seed-tab-default.active) .zp-editor {
+    min-height: 14rem;
   }
 
   .zp-chips {

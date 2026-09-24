@@ -46,7 +46,9 @@ not compete with the playground.
 
 The page works without JavaScript. The playground ships a read-only editor and
 pre-rendered proof card. JavaScript upgrades it to the live analyzer, adds
-syntax highlighting, and enables perturbation controls.
+syntax highlighting, and enables an explicit proof and repair sample. The
+visitor can reset an edited example. Additional failures sit under a native
+disclosure. The analyzer runs live; sample repairs replay known plans.
 
 Technical disclosures use native `details` and `summary`. The mobile menu is the
 only drawer-like interaction.

@@ -6,7 +6,7 @@
     <title>zttp - prove AI-written TypeScript before it lands</title>
     <meta
       name="description"
-      content="zttp proves AI-written TypeScript before it reaches disk. Red drafts are vetoed, and supported failures get compiler-authored repairs."
+      content="zttp is an agent-compiler: its compiler is an agent too. It checks every draft your AI agent writes before it reaches disk and repairs what it can with no model call."
     >
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#ffffff">
@@ -32,7 +32,7 @@
     >
     <meta
       property="og:description"
-      content="zttp proves AI-written TypeScript before it reaches disk. Red drafts are vetoed, and supported failures get compiler-authored repairs."
+      content="zttp is an agent-compiler: its compiler is an agent too. It checks every draft your AI agent writes before it reaches disk and repairs what it can with no model call."
     >
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -53,7 +53,7 @@
     >
     <meta
       name="twitter:description"
-      content="zttp proves AI-written TypeScript before it reaches disk. Red drafts are vetoed, and supported failures get compiler-authored repairs."
+      content="zttp is an agent-compiler: its compiler is an agent too. It checks every draft your AI agent writes before it reaches disk and repairs what it can with no model call."
     >
     <meta
       name="twitter:image"
@@ -69,7 +69,7 @@
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "zttp",
-      "description": "zttp proves AI-written TypeScript before it reaches disk. Red drafts are vetoed, supported failures get compiler-authored repairs, and proven handlers ship with a signed receipt.",
+      "description": "zttp is an agent-compiler: its compiler is an agent too. It checks every draft your AI agent writes before it reaches disk and repairs what it can with no model call. Proven handlers ship with a signed receipt.",
       "url": "https://zigttp.timok.com",
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "Agent-Compiler, TypeScript Proof Engine, CLI Tool",
@@ -152,13 +152,13 @@
           </p>
           <h1>AI-written TypeScript, proved before it lands.</h1>
           <p class="z-hero-lede">
-            zttp restricts TypeScript to a language its compiler can judge
-            completely, so red drafts never reach disk and supported failures
-            get a compiler-authored repair.
+            In zttp, the compiler is an agent too. It checks every draft your AI
+            agent writes before it reaches disk, and it repairs what it can
+            itself, with no model call.
           </p>
           <div class="z-hero-actions">
             <a class="z-button z-button-primary" href="#playground"
-            >Break a proof</a>
+            >Try it in your browser</a>
           </div>
           <div class="z-install-card" role="group" aria-label="Install command">
             <span class="z-prompt">$</span>
@@ -183,7 +183,7 @@
         <figure class="z-product-shot">
           <div class="z-code-card">
             <div class="z-pane-title">
-              <span>zttp expert</span><em>one write path</em>
+              <span>zttp expert</span><em>one session</em>
             </div>
             <pre><code><span class="z-cmd">$</span> zttp expert <span class="z-str">"add auth to the webhook"</span>
 
@@ -200,7 +200,8 @@
   <span class="z-safe">PROVEN  3/3 declared | 6/7 properties</span></code></pre>
           </div>
           <figcaption>
-            A rejected draft, a compiler-authored repair, and a green proof.
+            The compiler rejects the draft, repairs it with no model call, then proves
+            it.
           </figcaption>
         </figure>
       </section>
@@ -208,14 +209,15 @@
       <section class="z-section z-playground" id="playground">
         <p class="z-section-kicker">
           <span class="z-status-dot z-dot-safe"></span>
-          Live zts analyzer
+          Runs in your browser
         </p>
         <div class="z-heading-wide">
           <h2>Break a proof in your browser.</h2>
           <p>
-            Edit the handler or inject a failure. The WebAssembly analyzer
-            returns the failed property, file, and line. Your source stays in
-            the page. Sample repairs replay known compiler plans.
+            Edit the code or pick a failure. The analyzer runs as WebAssembly on
+            this page and shows which guarantee broke and on which line. Your
+            code is not uploaded. The repair buttons replay recorded compiler
+            fixes.
           </p>
         </div>
 
@@ -225,8 +227,8 @@
           aria-label="Playground trust boundaries"
         >
           <span><i class="z-status-dot z-dot-safe"></i>Real analyzer</span>
-          <span><i class="z-status-dot z-dot-idle"></i>Local source</span>
-          <span><i class="z-status-dot z-dot-review"></i>Typed verdict</span>
+          <span><i class="z-status-dot z-dot-idle"></i>Runs locally</span>
+          <span><i class="z-status-dot z-dot-review"></i>Nothing uploaded</span>
         </div>
 
         <div class="zp-grid">
@@ -242,7 +244,7 @@
                 aria-controls="zp-editor-panel"
                 tabindex="0"
               >
-                With <code>Proof&lt;T, P&gt;</code>
+                <code>Proof&lt;T, P&gt;</code>: 3 guarantees
               </button>
               <button
                 type="button"
@@ -254,7 +256,7 @@
                 aria-controls="zp-editor-panel"
                 tabindex="-1"
               >
-                No Proof (starts blocked)
+                Default: all 7
               </button>
             </div>
             <div class="zp-toolbar">
@@ -263,19 +265,19 @@
               </span>
               <div class="zp-demo-controls">
                 <button type="button" class="zp-demo-replay">
-                  Run proof and repair sample
+                  Watch it break and get fixed
                 </button>
                 <span class="zp-demo-state" aria-live="polite"
                 >proof engine idle</span>
                 <button type="button" class="zp-retry" hidden>
-                  Retry proof engine
+                  Retry the analyzer
                 </button>
               </div>
               <button type="button" class="zp-reset" hidden>
                 Reset example
               </button>
               <details class="zp-more-examples">
-                <summary>More failure examples</summary>
+                <summary>More ways to break it</summary>
                 <div
                   class="zp-perturbations"
                   role="group"
@@ -347,8 +349,8 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
           <figure class="zp-card zp-ok" id="zp-card">
             <div class="zp-head zp-ok">
               <span class="zp-verdict" aria-live="polite">PROVEN</span>
-              <strong class="zp-count">3/3 declared specs</strong>
-              <span class="zp-scope">6/7 analyzed properties hold</span>
+              <strong class="zp-count">3 of 3 chosen guarantees proven</strong>
+              <span class="zp-scope">6 of 7 guarantees hold</span>
               <span class="zp-live-readout">
                 <span
                   class="z-status-dot z-dot-safe zp-live-dot"
@@ -369,7 +371,7 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 aria-controls="zp-lens-properties"
                 tabindex="0"
               >
-                Properties
+                Guarantees
               </button>
               <button
                 type="button"
@@ -380,7 +382,7 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 aria-controls="zp-lens-trade"
                 tabindex="-1"
               >
-                Trade
+                Trade-offs
               </button>
               <button
                 type="button"
@@ -391,7 +393,7 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 aria-controls="zp-lens-handover"
                 tabindex="-1"
               >
-                Handover
+                Certificate
               </button>
               <button
                 type="button"
@@ -402,7 +404,7 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 aria-controls="zp-lens-caller"
                 tabindex="-1"
               >
-                Caller view
+                Callers
               </button>
             </div>
 
@@ -475,7 +477,7 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
             >
               <pre
                 class="zp-cert"
-              >Press a perturbation, then read the certificate here.</pre>
+              >Break the code above, then read its certificate here.</pre>
               <button type="button" class="zp-copy">Copy certificate</button>
             </div>
 
@@ -502,9 +504,9 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
   Policy    pinned by runtime_policy_sha256</pre>
               <p class="zp-caller-foot">
                 The signature is checked against the public key at
-                <code>/.well-known/zttp-attest</code>. Since v0.18.0 the
-                envelope also pins the egress, env, cache, and SQL allowlist the
-                sandbox enforces.
+                <code>/.well-known/zttp-attest</code>. The signed envelope also
+                pins the outbound network, environment, cache, and SQL allowlist
+                that the sandbox enforces.
               </p>
             </div>
 
@@ -519,11 +521,7 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
             <span class="z-status-dot z-dot-review"></span>
             One write path
           </p>
-          <h2>The compiler gates every agent edit.</h2>
-          <p class="z-section-intro">
-            The agent drafts. The compiler proves the draft before writing it.
-            Green code lands. Supported failures are repaired and proved again.
-          </p>
+          <h2>Every edit has two authors.</h2>
         </div>
 
         <ol class="z-workflow" aria-label="The zttp write path">
@@ -540,19 +538,20 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           <li data-state="repair">
             <span>03</span>
             <strong>Repair</strong>
-            <p>Supported failures receive a typed compiler edit.</p>
+            <p>The compiler fixes known failures itself, with no model call.</p>
           </li>
           <li data-state="write">
             <span>04</span>
             <strong>Write</strong>
-            <p>Only a green result lands.</p>
+            <p>Only proven code is written.</p>
           </li>
         </ol>
 
         <p class="z-workflow-caption">
-          The session ledger records whether the model or compiler authored each
-          edit. <code>zttp expert</code> needs a DeepSeek key, or
-          <code>--provider local</code> and a local MLX server.
+          The session ledger records whether the model or the compiler authored
+          each edit. For five safety properties, the compiler plans, applies,
+          and verifies the fix with no model at all, and rolls back if the fix
+          breaks anything else.
         </p>
 
         <div class="z-detail-grid">
@@ -560,9 +559,10 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
             <summary>Why zts restricts TypeScript</summary>
             <div>
               <p>
-                zts removes constructs that make whole-program proof open-ended.
-                Each restriction buys a specific proof and narrows the agent's
-                search space.
+                zts removes the features the compiler cannot fully check, such
+                as classes, async, try/catch, and while loops. Each removal makes
+                one guarantee provable and gives the agent fewer wrong ways to
+                write code.
               </p>
               <a
                 href="https://github.com/srdjan/zttp/blob/main/docs/restrictions-to-proofs.md"
@@ -576,16 +576,16 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
             <summary>Compare zttp with bolt-on checkers</summary>
             <div class="z-comparison">
               <p>
-                <strong>Agent plus checker:</strong> code lands before a
-                post-hoc verdict over an unrestricted language.
+                <strong>Agent plus checker:</strong> the code is written first
+                and checked afterwards, in full TypeScript.
               </p>
               <p>
-                <strong>Compiler plus agent:</strong> diagnostics feed an
-                open-ended model retry loop.
+                <strong>Compiler plus agent:</strong> the compiler only returns
+                error text, and the model retries with no limit.
               </p>
               <p>
-                <strong>zttp:</strong> the restricted language and compiler
-                share the only write path.
+                <strong>zttp:</strong> the compiler is an agent too. It shares
+                the only write path with the model and writes its own repairs.
               </p>
             </div>
           </details>
@@ -598,10 +598,10 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
             <span class="z-status-dot z-dot-review"></span>
             Current evidence
           </p>
-          <h2>See what holds today.</h2>
+          <h2>What is proven today, and what is not.</h2>
           <p class="z-section-intro">
-            zttp separates construction guarantees from incomplete and
-            unmeasured claims. The ledger is versioned with the repository.
+            zttp grades its own claims the same way it grades code. The ledger
+            is versioned with the repository.
           </p>
         </div>
 
@@ -609,22 +609,22 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           <article data-tier="construction">
             <h3>Holds by construction</h3>
             <p>
-              Rejected drafts cannot reach the write path. The analyzer is total
-              over zts.
+              Rejected drafts cannot reach disk. The analyzer returns a verdict
+              for every zts program.
             </p>
           </article>
           <article data-tier="thin">
-            <h3>Thin today</h3>
+            <h3>Partly proven</h3>
             <p>
-              Compiler-authored repairs and replayable witnesses exist, with
-              limited aggregate agent evidence.
+              Compiler-authored repairs and replayable counterexamples work, but
+              there is little aggregate data from agent sessions yet.
             </p>
           </article>
           <article data-tier="unmeasured">
-            <h3>Unmeasured</h3>
+            <h3>Not measured yet</h3>
             <p>
-              Reachability across the provable set and time to first green have
-              no current aggregate.
+              We have not measured whether the agent can write every program the
+              compiler can prove, or how long a first passing proof takes.
             </p>
           </article>
         </div>
@@ -692,8 +692,8 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
         <p class="z-section-kicker">First proof</p>
         <h2>Prove your first handler.</h2>
         <p>
-          Install zttp, scaffold an API, then add an unsupported construct. The
-          compiler points to the failed property and source line.
+          Install zttp, scaffold an API, then add a line zts rejects, such as
+          try/catch. The compiler names the failed guarantee and source line.
         </p>
 
         <div class="z-install-card" role="group" aria-label="Install command">
@@ -767,6 +767,6 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
     </footer>
 
     <script src="/script.js?v=18" defer></script>
-    <script src="/playground.js?v=22" defer></script>
+    <script src="/playground.js?v=23" defer></script>
   </body>
 </html>

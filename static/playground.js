@@ -283,8 +283,8 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (cardVerdict.textContent !== verdict) cardVerdict.textContent = verdict;
     cardCount.textContent = proofScopeSummary(proof);
     cardScope.textContent = proof && proof.properties
-      ? provenCount + "/" + PROPS.length + " analyzed properties hold"
-      : "properties were not evaluated";
+      ? provenCount + " of " + PROPS.length + " guarantees hold"
+      : "guarantees were not checked";
 
     // The verdict header and Why row are always visible; only the active
     // lens pane needs rebuilding. The other panes render on tab switch.
@@ -304,15 +304,15 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   }
 
   function proofScopeSummary(proof) {
-    if (!proof) return "proof blocked before properties";
+    if (!proof) return "blocked before any guarantee was checked";
     const specs = proof.declared_specs || [];
     if (lastDeclaresProof) {
-      if (!specs.length) return "declared proof blocked";
+      if (!specs.length) return "chosen guarantees blocked";
       const undischarged = undischargedSpecs(proof);
       const provenSpecs = specs.filter((s) => !undischarged.has(s)).length;
-      return provenSpecs + "/" + specs.length + " declared specs proven";
+      return provenSpecs + " of " + specs.length + " chosen guarantees proven";
     }
-    return "strict default: full proof profile required";
+    return "default: all " + PROPS.length + " guarantees required";
   }
 
   // Rebuild one lens pane from the cached last result. The Caller view is
@@ -1007,8 +1007,8 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     if (retryButton) retryButton.hidden = state !== "unavailable";
 
     if (state === "static") {
-      setStatus("pre-rendered proof preview", "");
-      setDemoState("static proof preview");
+      setStatus("preview: the live analyzer loads when you reach it", "");
+      setDemoState("static preview");
       return;
     }
 
@@ -1017,10 +1017,10 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
         "loading",
         "LOADING",
         "proof pending",
-        "analyzed properties pending",
+        "guarantees pending",
       );
-      setStatus("loading proof engine...", "");
-      setDemoState("loading proof engine");
+      setStatus("loading the analyzer...", "");
+      setDemoState("loading the analyzer");
       return;
     }
 
@@ -1030,14 +1030,14 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
         "unavailable",
         "UNAVAILABLE",
         "proof not run",
-        "analyzed properties unavailable",
+        "guarantees not checked",
       );
       cardWhy.hidden = true;
       setStatus(
-        "proof engine unavailable - install zttp to try it locally",
+        "the analyzer did not load - install zttp to try it locally",
         "zp-status-warn",
       );
-      setDemoState("proof engine unavailable");
+      setDemoState("analyzer unavailable");
       return;
     }
 
@@ -1067,7 +1067,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     }
     setPlaygroundState("live");
     runAnalysis();
-    setDemoState("proof engine ready");
+    setDemoState("analyzer ready");
   }
 
   if (retryButton) retryButton.addEventListener("click", boot);

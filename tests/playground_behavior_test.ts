@@ -298,11 +298,11 @@ Deno.test("a successful analysis renders a proven card", async () => {
     "the proven chip count must match the properties in the envelope",
   );
   assert(
-    page.text(".zp-count") === "3/3 declared specs proven",
+    page.text(".zp-count") === "3 of 3 chosen guarantees proven",
     "the verdict scope must name the declared specs it proves",
   );
   assert(
-    page.text(".zp-scope") === "4/7 analyzed properties hold",
+    page.text(".zp-scope") === "4 of 7 guarantees hold",
     "the wider property result must stay separate from the verdict scope",
   );
 });
@@ -318,7 +318,7 @@ Deno.test("boot leaves the proven source still until a sample is requested", asy
     "loading the analyzer must not rewrite the editor",
   );
   assert(
-    page.text(".zp-demo-state") === "proof engine ready",
+    page.text(".zp-demo-state") === "analyzer ready",
     "the loaded playground must wait in a ready state",
   );
   assert(
@@ -464,7 +464,7 @@ Deno.test("strict-default guidance is concise and keeps analyzer text", async ()
     "the disclosure must preserve the analyzer's exact suggestion",
   );
   assert(
-    page.text(".zp-count") === "strict default: full proof profile required",
+    page.text(".zp-count") === "default: all 7 guarantees required",
     "the blocked verdict must name the strict default scope",
   );
 });
@@ -532,7 +532,7 @@ Deno.test("switching seeds clears the sample and the declared row", async () => 
   );
   assert(page.hidden(".zp-reset"), "a fresh seed must hide Reset");
   assert(
-    page.text(".zp-count") === "strict default: full proof profile required",
+    page.text(".zp-count") === "default: all 7 guarantees required",
     "the strict-default seed must report its own scope",
   );
 
@@ -577,7 +577,7 @@ Deno.test("a blocked result without proof data reports no property count", async
   await page.boot();
 
   assert(
-    page.text(".zp-scope") === "properties were not evaluated",
+    page.text(".zp-scope") === "guarantees were not checked",
     "a pre-property failure must not report a zero property score",
   );
 });
@@ -643,7 +643,7 @@ Deno.test("only a real Proof<T, P> declaration counts as declared", async () => 
     page.input(seed + extra);
     page.runTimers();
     assert(
-      page.text(".zp-count") === "strict default: full proof profile required",
+      page.text(".zp-count") === "default: all 7 guarantees required",
       `${extra.trim()} must not read as a declared Proof`,
     );
   }

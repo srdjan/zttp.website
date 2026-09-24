@@ -105,10 +105,6 @@ code {
   min-height: 2.75rem;
 }
 
-.zttp-home details:not([open]) > :not(summary) {
-  display: none;
-}
-
 .zttp-home img {
   display: block;
   max-width: 100%;
@@ -1462,7 +1458,6 @@ code {
 }
 
 .zp-more-examples summary {
-  min-height: 2.75rem;
   cursor: pointer;
   line-height: 2.75rem;
 }
@@ -1531,7 +1526,6 @@ code {
 
 .zp-perturbations button:disabled,
 .zp-demo-replay:disabled,
-.zp-reset:disabled,
 .zp-tab:disabled {
   cursor: not-allowed;
   opacity: 0.48;

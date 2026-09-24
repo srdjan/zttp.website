@@ -252,6 +252,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   let prevState = {};
   let activeLens = "properties";
   let lastResult = null;
+  let lastDeclaresProof = false;
   // The property key whose proof trace is expanded, or null. One open at a
   // time (accordion). Tracked so a recompile rebuild restores the open chip.
   let openChipKey = null;
@@ -277,14 +278,12 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     const verdict = ok ? "PROVEN" : "BLOCKED";
     // Guarded so the aria-live region announces only on a real flip.
     if (cardVerdict.textContent !== verdict) cardVerdict.textContent = verdict;
-    const proofScope = proofScopeSummary(proof, editor.value);
-    const propertyScope = proof && proof.properties
+    // Cached beside lastResult so a lens re-render on tab switch reuses it.
+    lastDeclaresProof = sourceDeclaresProof(editor.value);
+    cardCount.textContent = proofScopeSummary(proof);
+    cardScope.textContent = proof && proof.properties
       ? provenCount + "/" + PROPS.length + " analyzed properties hold"
       : "properties were not evaluated";
-    cardCount.textContent = cardScope
-      ? proofScope
-      : proofScope + " | " + propertyScope;
-    if (cardScope) cardScope.textContent = propertyScope;
 
     // The verdict header and Why row are always visible; only the active
     // lens pane needs rebuilding. The other panes render on tab switch.
@@ -296,14 +295,16 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     return /Proof\s*</.test(source.replace(/\/\/[^\n]*/g, ""));
   }
 
-  function proofScopeSummary(proof, source) {
+  function undischargedSpecs(proof) {
+    return new Set((proof.spec_diagnostics || []).map((d) => d.spec_name));
+  }
+
+  function proofScopeSummary(proof) {
     if (!proof) return "proof blocked before properties";
-    const declaresProof = sourceDeclaresProof(source);
-    const specs = (proof && proof.declared_specs) || [];
-    const specDiagnostics = (proof && proof.spec_diagnostics) || [];
-    if (declaresProof) {
+    const specs = proof.declared_specs || [];
+    if (lastDeclaresProof) {
       if (!specs.length) return "declared proof blocked";
-      const undischarged = new Set(specDiagnostics.map((d) => d.spec_name));
+      const undischarged = undischargedSpecs(proof);
       const provenSpecs = specs.filter((s) => !undischarged.has(s)).length;
       return provenSpecs + "/" + specs.length + " declared specs proven";
     }
@@ -473,13 +474,10 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     // enforced by default and the analyzer reports the full active set - that
     // is not an author declaration, so the row stays empty. This is the whole
     // point of the two tabs: default enforces all; Proof<T, P> narrows.
-    const declaresProof = sourceDeclaresProof(editor.value);
     const specs = (proof && proof.declared_specs) || [];
-    if (declaresProof && specs.length) {
+    if (lastDeclaresProof && specs.length) {
       specWrap.appendChild(el("span", "zp-specs-label", "declared Proof<>"));
-      const undischarged = new Set(
-        ((proof && proof.spec_diagnostics) || []).map((d) => d.spec_name),
-      );
+      const undischarged = undischargedSpecs(proof);
       specs.forEach((s) => {
         const ok = !undischarged.has(s);
         specWrap.appendChild(el("span", "zp-spec " + (ok ? "on" : "off"), s));
@@ -499,8 +497,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     const row = el("div", "zp-why-row");
     row.appendChild(el("span", "zp-status-dot z-dot-blocked"));
     row.appendChild(el("code", "zp-why-code", d.code));
-    const strictDefaultFailure = d.code === "ZTS500" &&
-      !sourceDeclaresProof(editor.value);
+    const strictDefaultFailure = d.code === "ZTS500" && !lastDeclaresProof;
     row.appendChild(el(
       "span",
       "zp-why-msg",
@@ -852,12 +849,8 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   function selectSeed(which) {
     activeSeed = which === "proof" ? SEED_PROOF : SEED_DEFAULT;
     VARIANTS = variantsFor(activeSeed);
-    setPerturbState(null);
     openChipKey = null;
-    editor.value = activeSeed;
-    syncResetVisibility();
-    syncHighlight();
-    runAnalysis();
+    applyPerturb(null);
   }
 
   function selectSeedTab(tab) {
@@ -984,9 +977,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
     seedTabs.forEach((button) => (button.disabled = !interactive));
     if (demoReplay) demoReplay.disabled = !interactive;
     if (resetButton) {
-      resetButton.disabled = !interactive;
-      if (interactive) syncResetVisibility();
-      else resetButton.hidden = true;
+      resetButton.hidden = !interactive || editor.value === activeSeed;
     }
     if (retryButton) retryButton.hidden = state !== "unavailable";
 
@@ -1000,7 +991,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       cardHead.className = "zp-head zp-loading";
       cardVerdict.textContent = "LOADING";
       cardCount.textContent = "proof pending";
-      if (cardScope) cardScope.textContent = "analyzed properties pending";
+      cardScope.textContent = "analyzed properties pending";
       if (cardLiveDot) {
         cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
       }
@@ -1014,7 +1005,7 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
       cardHead.className = "zp-head zp-unavailable";
       cardVerdict.textContent = "UNAVAILABLE";
       cardCount.textContent = "proof not run";
-      if (cardScope) cardScope.textContent = "analyzed properties unavailable";
+      cardScope.textContent = "analyzed properties unavailable";
       if (cardLiveDot) {
         cardLiveDot.className = "z-status-dot z-dot-idle zp-live-dot";
       }

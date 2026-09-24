@@ -21,10 +21,9 @@ type Editor = Element & {
   selectionEnd: number;
 };
 
-type ClipboardBehavior = "missing" | "reject" | "success";
 type Options = {
   analyzer?: Analyzer;
-  clipboard?: ClipboardBehavior;
+  clipboard?: "missing" | "reject";
   reduceMotion?: boolean;
   wasmLoads?: boolean;
 };
@@ -40,14 +39,16 @@ const evaluatePlayground = new Function(
   `const {\ndocument, fetch, WebAssembly, IntersectionObserver,\nperformance, navigator, setTimeout, clearTimeout, globalThis\n} = env;\n${SOURCE}`,
 ) as unknown as (env: Record<string, unknown>) => void;
 
+const PROOF_SEED_SPECS = [
+  "deterministic",
+  "no_secret_leakage",
+  "injection_safe",
+];
+
 const PROVEN_ENVELOPE = JSON.stringify({
   success: true,
   proof: {
-    declared_specs: [
-      "deterministic",
-      "no_secret_leakage",
-      "injection_safe",
-    ],
+    declared_specs: PROOF_SEED_SPECS,
     spec_diagnostics: [],
     properties: {
       deterministic: true,
@@ -62,11 +63,7 @@ const PROVEN_ENVELOPE = JSON.stringify({
 const DATE_NOW_ENVELOPE = JSON.stringify({
   success: false,
   proof: {
-    declared_specs: [
-      "deterministic",
-      "no_secret_leakage",
-      "injection_safe",
-    ],
+    declared_specs: PROOF_SEED_SPECS,
     spec_diagnostics: [{ spec_name: "deterministic" }],
     properties: {
       deterministic: false,
@@ -171,7 +168,7 @@ function asEditor(node: Element | null): Editor {
 }
 
 function load(options: Options = {}) {
-  const analyzer = options.analyzer ?? ((_source) => PROVEN_ENVELOPE);
+  const analyzer = options.analyzer ?? (() => PROVEN_ENVELOPE);
   const doc = new DOMParser().parseFromString(PAGE, "text/html");
   assert(doc, "the homepage must parse");
   const editor = asEditor(doc.getElementById("zp-src"));
@@ -191,14 +188,9 @@ function load(options: Options = {}) {
     disconnect() {}
   }
 
-  const clipboard = options.clipboard === "missing" || !options.clipboard
-    ? undefined
-    : {
-      writeText: (_text: string) =>
-        options.clipboard === "reject"
-          ? Promise.reject(new Error("clipboard denied"))
-          : Promise.resolve(),
-    };
+  const clipboard = options.clipboard === "reject"
+    ? { writeText: () => Promise.reject(new Error("clipboard denied")) }
+    : undefined;
 
   evaluatePlayground({
     document: doc,
@@ -475,7 +467,7 @@ Deno.test("certificate copy falls back when Clipboard access fails", async () =>
 });
 
 Deno.test("a null analyzer result cannot leave a proven verdict", async () => {
-  const page = load({ analyzer: (_source) => null });
+  const page = load({ analyzer: () => null });
   await page.boot();
 
   assert(
@@ -487,7 +479,7 @@ Deno.test("a null analyzer result cannot leave a proven verdict", async () => {
 
 Deno.test("a blocked result without proof data reports no property count", async () => {
   const page = load({
-    analyzer: (_source) =>
+    analyzer: () =>
       JSON.stringify({
         success: false,
         proof: null,
@@ -508,7 +500,7 @@ Deno.test("a blocked result without proof data reports no property count", async
 
 Deno.test("a throwing analyzer call cannot leave a proven verdict", async () => {
   const page = load({
-    analyzer: (_source) => {
+    analyzer: () => {
       throw new Error("analyzer trapped");
     },
   });
@@ -521,7 +513,7 @@ Deno.test("a throwing analyzer call cannot leave a proven verdict", async () => 
 });
 
 Deno.test("malformed analyzer output cannot leave a proven verdict", async () => {
-  const page = load({ analyzer: (_source) => "{not json" });
+  const page = load({ analyzer: () => "{not json" });
   await page.boot();
 
   assert(

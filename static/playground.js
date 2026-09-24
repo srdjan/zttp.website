@@ -554,6 +554,8 @@ const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
   // Render the known inverse for the active sample. The browser replays this
   // fixed example after the live analyzer reports its diagnostic.
   function renderPlan(plan) {
+    // A repeat click during the hold replaces the plan instead of stacking it.
+    cardWhy.querySelector(".zp-plan")?.remove();
     const box = el("div", "zp-plan");
     box.appendChild(el("span", "zp-plan-tag", "known example repair (replay)"));
     const rows = [

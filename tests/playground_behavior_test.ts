@@ -424,6 +424,25 @@ Deno.test("a perturbation can be reset to its proven seed", async () => {
   );
 });
 
+Deno.test("a repeated repair click shows one plan box", async () => {
+  const page = load({ analyzer: sourceAwareAnalyzer });
+  await page.boot();
+  page.click('[data-perturb="datenow"]');
+
+  page.click(".zp-repair");
+  page.click(".zp-repair");
+
+  assert(
+    page.doc.querySelectorAll(".zp-plan").length === 1,
+    "a second click during the hold must replace the plan, not stack it",
+  );
+  page.runTimers();
+  assert(
+    page.text(".zp-verdict") === "PROVEN",
+    "the replayed repair must still land after a repeated click",
+  );
+});
+
 Deno.test("strict-default guidance is concise and keeps analyzer text", async () => {
   const page = load({ analyzer: sourceAwareAnalyzer });
   await page.boot();

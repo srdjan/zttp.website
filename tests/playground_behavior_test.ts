@@ -23,7 +23,7 @@ type Editor = Element & {
 
 type Options = {
   analyzer?: Analyzer;
-  clipboard?: "missing" | "reject";
+  clipboard?: "accept" | "missing" | "reject";
   reduceMotion?: boolean;
   wasmLoads?: boolean;
 };
@@ -176,6 +176,7 @@ function load(options: Options = {}) {
     | ((entries: Array<{ isIntersecting: boolean }>) => void)
     | null = null;
   let scheduledCount = 0;
+  const pendingTimers = new Map<number, () => void>();
   const promptCalls: Array<{ label: string; value: string }> = [];
 
   class TestObserver {
@@ -190,6 +191,8 @@ function load(options: Options = {}) {
 
   const clipboard = options.clipboard === "reject"
     ? { writeText: () => Promise.reject(new Error("clipboard denied")) }
+    : options.clipboard === "accept"
+    ? { writeText: () => Promise.resolve() }
     : undefined;
 
   evaluatePlayground({
@@ -210,10 +213,15 @@ function load(options: Options = {}) {
     IntersectionObserver: TestObserver,
     performance: { now: () => 0 },
     navigator: clipboard ? { clipboard } : {},
-    // Scheduled demo beats are recorded and never run, so every assertion below
-    // reads a settled card instead of racing an animation.
-    setTimeout: () => ++scheduledCount,
-    clearTimeout: () => {},
+    // Scheduled callbacks are recorded, not run, so every assertion below reads
+    // a settled card instead of racing an animation. runTimers() fires the ones
+    // still pending, as the browser would once their delay passed.
+    setTimeout: (callback: () => void) => {
+      scheduledCount += 1;
+      pendingTimers.set(scheduledCount, callback);
+      return scheduledCount;
+    },
+    clearTimeout: (id: number) => pendingTimers.delete(id),
     globalThis: {
       IntersectionObserver: TestObserver,
       matchMedia: () => ({ matches: options.reduceMotion === true }),
@@ -247,6 +255,11 @@ function load(options: Options = {}) {
     },
     promptCalls,
     scheduledCount: () => scheduledCount,
+    runTimers: () => {
+      const due = [...pendingTimers.values()];
+      pendingTimers.clear();
+      due.forEach((callback) => callback());
+    },
     state: () => doc.getElementById("playground")?.getAttribute("data-state"),
     keydown: (key: string, shiftKey: boolean) => {
       const event = Object.assign(new Event("keydown", { cancelable: true }), {
@@ -464,6 +477,58 @@ Deno.test("certificate copy falls back when Clipboard access fails", async () =>
       "the copy control must report the fallback state",
     );
   }
+});
+
+Deno.test("certificate copy reports success when Clipboard accepts", async () => {
+  const page = load({ clipboard: "accept" });
+  await page.boot();
+  page.click('[data-lens="handover"]');
+
+  page.click(".zp-copy");
+  await Promise.resolve();
+  await Promise.resolve();
+
+  assert(
+    page.text(".zp-copy") === "Copied",
+    "an accepted copy must confirm it on the control",
+  );
+  assert(
+    page.promptCalls.length === 0,
+    "an accepted copy must not open the manual fallback",
+  );
+});
+
+Deno.test("switching seeds clears the sample and the declared row", async () => {
+  const page = load({ analyzer: sourceAwareAnalyzer });
+  await page.boot();
+
+  page.click('[data-perturb="datenow"]');
+  page.click('[data-seed="default"]');
+
+  assert(
+    page.doc.querySelector('[data-perturb="datenow"]')?.getAttribute(
+      "aria-pressed",
+    ) === "false",
+    "a seed switch must release the active sample",
+  );
+  assert(page.hidden(".zp-reset"), "a fresh seed must hide Reset");
+  assert(
+    page.text(".zp-count") === "strict default: full proof profile required",
+    "the strict-default seed must report its own scope",
+  );
+
+  page.click('[data-lens="trade"]');
+  page.click('[data-lens="properties"]');
+  assert(
+    !page.text(".zp-specs").includes("declared Proof<>"),
+    "a lens rebuild must not invent a declared Proof row for the default",
+  );
+
+  page.click('[data-seed="proof"]');
+  assert(
+    page.text(".zp-specs").includes("declared Proof<>"),
+    "the Proof seed must show its declared specs",
+  );
 });
 
 Deno.test("a null analyzer result cannot leave a proven verdict", async () => {

@@ -73,7 +73,7 @@
       "url": "https://zigttp.timok.com",
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "Agent-Compiler, TypeScript Proof Engine, CLI Tool",
-      "keywords": "agent-compiler, compiler-in-the-loop agent, provable TypeScript, model-free repair, typed counterexamples, zts, compile-time proof, AI code verification, proof receipt, capability sandbox, Zig runtime, serverless functions",
+      "keywords": "agent-compiler, compiler-in-the-loop agent, provable TypeScript, model-free repair, typed counterexamples, zts, compile-time proof, AI code verification, proof receipt, capability sandbox, agent tool routes, application invariants, Zig runtime, serverless functions",
       "operatingSystem": "Linux, macOS",
       "license": "https://opensource.org/licenses/MIT",
       "programmingLanguage": ["Zig", "TypeScript"],
@@ -103,7 +103,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=24">
+    <link rel="stylesheet" href="/style.css?v=25">
   </head>
   <body class="zttp-home">
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -113,7 +113,7 @@
         <a class="z-brand" href="/" aria-label="zttp home">
           <img src="/logo-circle.jpeg" alt="" width="38" height="38">
           <span>zttp</span>
-          <small>v0.19.0</small>
+          <small>v0.21.0</small>
         </a>
         <button
           class="z-menu-button"
@@ -150,11 +150,11 @@
             <span class="z-status-dot z-dot-safe"></span>
             zttp agent-compiler
           </p>
-          <h1>AI-written TypeScript, proved before it lands.</h1>
+          <h1>Your AI writes the code. The compiler proves it.</h1>
           <p class="z-hero-lede">
-            In zttp, the compiler is an agent too. It checks every draft your AI
-            agent writes before it reaches disk, and it repairs what it can
-            itself, with no model call.
+            zttp is an agent-compiler: the compiler works as a second agent in
+            your coding session. It checks every draft before it reaches disk,
+            and it fixes the mistakes it knows without another model call.
           </p>
           <div class="z-hero-actions">
             <a class="z-button z-button-primary" href="#playground"
@@ -214,10 +214,10 @@
         <div class="z-heading-wide">
           <h2>Break a proof in your browser.</h2>
           <p>
-            Edit the code or pick a failure. The analyzer runs as WebAssembly on
-            this page and shows which guarantee broke and on which line. Your
-            code is not uploaded. The repair buttons replay recorded compiler
-            fixes.
+            Change the code or pick a way to break it. The real analyzer runs on
+            this page as WebAssembly and tells you which guarantee broke and on
+            which line. Your code stays in your browser. The fix buttons replay
+            repairs the compiler made in recorded sessions.
           </p>
         </div>
 
@@ -533,7 +533,7 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           <li data-state="prove">
             <span>02</span>
             <strong>Prove</strong>
-            <p>The compiler checks it before disk.</p>
+            <p>The compiler checks it before it is saved.</p>
           </li>
           <li data-state="repair">
             <span>03</span>
@@ -548,10 +548,9 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
         </ol>
 
         <p class="z-workflow-caption">
-          The session ledger records whether the model or the compiler authored
-          each edit. For five safety properties, the compiler plans, applies,
-          and verifies the fix with no model at all, and rolls back if the fix
-          breaks anything else.
+          zttp records who wrote each edit: the model or the compiler. For five
+          safety properties, the compiler plans, applies, and checks the fix on
+          its own, and undoes it if the fix breaks something else.
         </p>
 
         <div class="z-detail-grid">
@@ -592,6 +591,109 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
         </div>
       </section>
 
+      <section class="z-section" id="tools">
+        <div class="z-section-heading">
+          <p class="z-section-kicker">
+            <span class="z-status-dot z-dot-safe"></span>
+            New in 0.21
+          </p>
+          <h2>Turn a handler into a tool an agent can call.</h2>
+          <p class="z-section-intro">
+            A tool route is an HTTP endpoint for model and agent callers. You
+            describe each tool once, and the runtime checks every call on the
+            way in and on the way out.
+          </p>
+        </div>
+
+        <div class="z-feature-rows">
+          <article>
+            <h3>Checked input and output</h3>
+            <p>
+              Each tool declares a closed JSON schema for what it accepts and
+              what it returns. A bad request gets a 400 before your code runs,
+              and a bad answer becomes a 500 instead of reaching the caller.
+            </p>
+          </article>
+          <article>
+            <h3>Verified callers</h3>
+            <p>
+              Every call carries a signed token. The runtime checks it, gives
+              your handler the caller and tenant, and answers 403 when a request
+              asks for another tenant's data.
+            </p>
+          </article>
+          <article>
+            <h3>Keys your code never sees</h3>
+            <p>
+              Name an API key in <code>zttp.json</code>. The runtime adds it only
+              to requests for the endpoint, methods, and paths you allow, so the
+              handler never holds the value.
+            </p>
+          </article>
+          <article>
+            <h3>Ledgers that stay balanced</h3>
+            <p>
+              Declare that every currency in a ledger sums to zero. zttp checks
+              each posting before it commits and refuses one that breaks the
+              rule, with nothing written.
+            </p>
+          </article>
+        </div>
+
+        <div class="z-first-proof">
+          <pre><code><span class="z-cmd">import</span> { toolCatalog, toolInput } <span class="z-cmd">from</span> <span class="z-str">"zttp:tool"</span>;
+
+toolCatalog({
+  convert: {
+    route: <span class="z-str">"POST /tools/convert"</span>,
+    description: <span class="z-str">"Convert a temperature between Celsius, Fahrenheit, and Kelvin."</span>,
+    input: <span class="z-str">"ConvertInput"</span>,
+    output: <span class="z-str">"ConvertOutput"</span>,
+    maxInputBytes: 128
+  }
+});</code></pre>
+          <p>
+            One declaration per tool. <code>examples/tools</code> is a complete
+            project with two tools.
+          </p>
+        </div>
+
+        <div class="z-detail-grid">
+          <details class="z-page-detail">
+            <summary>How a tool call is checked</summary>
+            <div>
+              <p>
+                The runtime refuses an input over the byte limit (413) or one
+                the schema rejects (400), verifies the caller's token (401), and
+                checks the tenant field (403), all before the handler runs. Each
+                tool may call only the modules its own route reaches.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/main/docs/user-guide.md#tool-routes"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Read the tool route guide</a>
+            </div>
+          </details>
+
+          <details class="z-page-detail">
+            <summary>What a ledger invariant does not prove</summary>
+            <div>
+              <p>
+                Balance conservation means the balances in each currency always
+                sum to zero. It does not prove correct recipients,
+                authorization, sufficient funds, or correct business amounts.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/main/docs/user-guide.md#application-invariants"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Read the invariants guide</a>
+            </div>
+          </details>
+        </div>
+      </section>
+
       <section class="z-section" id="evidence">
         <div class="z-section-heading">
           <p class="z-section-kicker">
@@ -600,8 +702,8 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           </p>
           <h2>What is proven today, and what is not.</h2>
           <p class="z-section-intro">
-            zttp grades its own claims the same way it grades code. The ledger
-            is versioned with the repository.
+            zttp grades its own claims the same way it grades code, and the
+            grades live in the repository beside the code they describe.
           </p>
         </div>
 
@@ -609,22 +711,22 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           <article data-tier="construction">
             <h3>Holds by construction</h3>
             <p>
-              Rejected drafts cannot reach disk. The analyzer returns a verdict
+              A rejected draft never reaches disk. The analyzer gives a verdict
               for every zts program.
             </p>
           </article>
           <article data-tier="thin">
-            <h3>Partly proven</h3>
+            <h3>Measured</h3>
             <p>
-              Compiler-authored repairs and replayable counterexamples work, but
-              there is little aggregate data from agent sessions yet.
+              On a fixed set of 19 coding tasks, 14 first drafts from DeepSeek
+              V4 Flash pass the compiler unchanged, and all 19 end proven.
             </p>
           </article>
           <article data-tier="unmeasured">
             <h3>Not measured yet</h3>
             <p>
-              We have not measured whether the agent can write every program the
-              compiler can prove, or how long a first passing proof takes.
+              Whether a small model on your own machine does as well. That test
+              is planned and has not run.
             </p>
           </article>
         </div>
@@ -637,15 +739,17 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
             </p>
             <h3>Ship the proof with the handler.</h3>
             <p>
-              <code>zttp deploy</code> builds one signed binary.
-              <code>zttp verify &lt;url&gt;</code> checks the signature and
-              pinned runtime policy.
+              <code>zttp deploy</code> builds one signed binary. Before it serves
+              a request, the binary checks the proof again with its own
+              independent checker, and it refuses to start if anything inside
+              was changed. Anyone can run <code>zttp verify &lt;url&gt;</code> to
+              check the signature.
             </p>
           </div>
           <ul aria-label="Runtime proof carrier">
-            <li>Self-contained binary</li>
-            <li>Signed receipt</li>
-            <li>Public verification</li>
+            <li>One self-contained binary</li>
+            <li>Proof checked at startup</li>
+            <li>Signed and publicly verifiable</li>
           </ul>
         </div>
 
@@ -692,8 +796,9 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
         <p class="z-section-kicker">First proof</p>
         <h2>Prove your first handler.</h2>
         <p>
-          Install zttp, scaffold an API, then add a line zts rejects, such as
-          try/catch. The compiler names the failed guarantee and source line.
+          Install zttp and scaffold an API. Then add a line zts does not allow,
+          such as try/catch, and watch the compiler name the broken guarantee
+          and the line.
         </p>
 
         <div class="z-install-card" role="group" aria-label="Install command">
@@ -729,10 +834,10 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
         <div class="z-hero-actions center">
           <a
             class="z-button z-button-primary"
-            href="https://github.com/srdjan/zttp/releases/tag/v0.19.0"
+            href="https://github.com/srdjan/zttp/releases/tag/v0.21.0"
             target="_blank"
             rel="noopener noreferrer"
-          >Download v0.19.0</a>
+          >Download v0.21.0</a>
           <a
             class="z-button z-button-secondary"
             href="https://github.com/srdjan/zttp/blob/main/docs/user-guide.md#first-project"

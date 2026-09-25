@@ -7,14 +7,16 @@ a proof in the browser, and know how to install the CLI.
 
 ## Content Architecture
 
-The homepage has five content sections:
+The homepage has six content sections:
 
 1. Hero: the product claim, one action, one install command, and one veto
    transcript.
 2. Live proof: the real WebAssembly analyzer and its proof card.
 3. One write path: four steps from draft to proven write.
-4. Evidence: three evidence grades and a compact runtime proof carrier.
-5. Install: one command, the first three CLI steps, and two links.
+4. Tool routes: the current release's headline features as four rows, one real
+   catalog snippet, and two disclosures, one of which states a limit.
+5. Evidence: three evidence grades and a compact runtime proof carrier.
+6. Install: one command, the first three CLI steps, and two links.
 
 The header contains Try, Docs, GitHub, and Install. The footer contains GitHub,
 Docs, Releases, and Strategy.
@@ -26,6 +28,8 @@ first action. Technical depth uses native `details` elements:
 
 - Why zts restricts TypeScript
 - Comparison with bolt-on checkers
+- How a tool call is checked
+- What a ledger invariant does not prove
 - Full claim ledger
 - Runtime and workflow documentation
 

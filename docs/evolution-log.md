@@ -78,3 +78,20 @@
   security policy remain unchanged
 - Verification: Deno formatting and checks, desktop and mobile browser review,
   live proof failure, mobile navigation, disclosures, and no-JavaScript fallback
+
+## Iteration 5: v0.21.0 Tool Routes and Plainer Copy
+
+- What changed:
+  - Added a tool-routes section for v0.21.0: checked input and output, verified
+    callers, credentials the handler never sees, and balanced ledgers, with the
+    real `toolCatalog` snippet from `examples/tools`
+  - Rewrote the hero, playground, workflow, and install copy in plainer words
+  - Replaced the "Partly proven" evidence grade with the measured convergence
+    figure (14 of 19 first drafts, 19 of 19 end proven) from the zttp
+    `docs/convergence.md`, and moved the open item to the small local model run
+  - Added the startup proof check and tamper refusal to the proof carrier
+  - Updated version labels and the download link to v0.21.0
+- Primary metric: a visitor can name one v0.21.0 capability after scrolling past
+  the workflow section
+- Guardrails: no new routes, scripts, or origins; the new section reuses the
+  evidence-row and first-proof styles

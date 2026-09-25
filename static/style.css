@@ -789,11 +789,13 @@ code {
   margin-top: 0;
 }
 
-.z-evidence-levels {
+.z-evidence-levels,
+.z-feature-rows {
   border-top: 1px solid var(--z-line);
 }
 
-.z-evidence-levels article {
+.z-evidence-levels article,
+.z-feature-rows article {
   display: grid;
   grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 1fr);
   gap: 2rem;
@@ -802,7 +804,8 @@ code {
   padding: 1.4rem 0;
 }
 
-.z-evidence-levels h3 {
+.z-evidence-levels h3,
+.z-feature-rows h3 {
   margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
@@ -822,11 +825,22 @@ code {
   color: var(--z-accent);
 }
 
-.z-evidence-levels p {
+.z-evidence-levels p,
+.z-feature-rows p {
   margin: 0;
   color: var(--z-muted);
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.z-feature-rows code {
+  color: var(--z-accent);
+  font-size: 0.86em;
+}
+
+.z-feature-rows + .z-first-proof {
+  max-width: none;
+  margin: 2.5rem 0 0;
 }
 
 .z-proof-carrier {
@@ -1239,7 +1253,8 @@ code {
     padding-left: 0;
   }
 
-  .z-evidence-levels article {
+  .z-evidence-levels article,
+  .z-feature-rows article {
     grid-template-columns: 1fr;
     gap: 0.4rem;
   }

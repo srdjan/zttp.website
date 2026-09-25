@@ -95,3 +95,23 @@
   the workflow section
 - Guardrails: no new routes, scripts, or origins; the new section reuses the
   evidence-row and first-proof styles
+
+## Iteration 6: Deep Field
+
+- What changed:
+  - Replaced the white editorial theme with Deep Field, chosen from three
+    variants (Deep Field, Blueprint, Daylight) built on the SLX waitlist palette
+    and adjusted to the logo's electric blue and orange
+  - Italic serif display type, glass panels, film grain and a drifting aurora
+  - Signatures: logo speed streaks into the headline, a lime-ending headline, a
+    transcript sweep, a veto-to-proven rule on the write path, row streaks
+  - Game feel from the web game design system: a pooled particle burst on
+    verdict flips (`static/proof-juice.js`), verdict pop, card shake, press
+    squash
+  - Fixed the skip link, whose colour lost to `.zttp-home a` and was unreadable
+- Verification: computed styles of all 299 elements matched the approved preview
+  at 1440 and 396 pixels except invisible zero-width border colours and the
+  intended aurora fix; the text contrast audit found no failures; the burst
+  fires under the production CSP
+- Guardrails: no new routes or origins; fonts come from the existing Google
+  Fonts origin; the page works without JS

@@ -38,13 +38,17 @@ examples, and product refusals belong in repository documentation.
 
 ## Visual Direction
 
-The live proof is the page's main interactive surface. Graphite marks compiler
-output, cream carries editorial copy, red marks a veto, and green marks a proven
-write. Ordinary sections use tighter spacing than the hero and playground.
+Deep Field: the ink-teal night of the logo, from the SLX waitlist palette. Film
+grain and a slowly drifting aurora make the ground, Instrument Serif italic
+carries display type, and panels are glass. Colour has fixed meanings: lime is
+proven, rose is a veto, and the logo orange is the one action colour. The live
+proof is the page's main interactive surface.
 
-The signature is one red draft moving through the compiler gate and ending
-green. Supporting sections use borders and restrained surface changes so they do
-not compete with the playground.
+The signature is the logo's three orange speed streaks trailing into the
+headline, which fades from ice to lime at "proves it." Motion carries meaning: a
+sweep over the transcript as the compiler simulates, a rose-to-lime rule along
+the write path, and a particle burst when the playground verdict flips. Every
+effect animates transform, opacity, or a shadow, and stops under reduced motion.
 
 ## Interaction Contract
 

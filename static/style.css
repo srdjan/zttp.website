@@ -1,4 +1,6 @@
-/* zttp site: white editorial page, one berry accent, dark proof surfaces. */
+/* zttp site: Deep Field. The ink-teal night of the logo: film grain and a drifting
+   aurora, an italic serif display face, glass panels. Lime is proven, rose is a
+   veto, the logo orange is the one action colour. */
 
 /* --- Reset and base --- */
 *,
@@ -10,37 +12,34 @@
 }
 
 :root {
-  --z-bg: #fff;
-  --z-bg-soft: #f7f7f8;
-  --z-paper: #fff;
-  --z-paper-muted: #fafafa;
-  --z-ink: #1b1b1c;
-  --z-ink-soft: #4a4a50;
-  --z-muted: #626267;
-  --z-line: #dcdce0;
-  --z-line-strong: #b9b9c0;
-  --z-terminal: #1b1b1c;
-  --z-terminal-2: #242427;
-  --z-terminal-3: #36363b;
-  --z-accent: #ad1853;
-  --z-accent-dark: #8d1041;
-  --z-accent-soft: #fbf4f6;
-  /* Berry that holds contrast on the dark terminal surfaces. */
-  --z-accent-light: #f38db5;
-  --z-blue: #2563eb;
-  --z-green: #25733f;
-  --z-yellow: #9a6a00;
-  --z-red: #c43f5f;
+  --z-bg: #051820;
+  --z-bg-soft: #082330;
+  --z-paper: rgb(186 232 244 / 0.04);
+  --z-paper-muted: rgb(186 232 244 / 0.06);
+  --z-glass: rgb(186 232 244 / 0.05);
+  --z-ink: #eef8fb;
+  --z-ink-soft: #c9dde4;
+  --z-muted: #93adb8;
+  --z-line: rgb(186 232 244 / 0.13);
+  --z-line-strong: rgb(186 232 244 / 0.28);
+  --z-terminal: #03111a;
+  --z-terminal-2: #071c26;
+  --z-terminal-3: #1b3a47;
+  /* The logo orange: the one action colour. */
+  --z-accent: #ff8a3d;
+  --z-accent-dark: #ff7a1a;
+  --z-accent-soft: rgb(255 138 61 / 0.08);
+  --z-accent-light: #ffb27a;
+  --z-blue: #5b9dff;
+  --z-green: #d4f57a;
+  --z-yellow: #ffc857;
+  --z-red: #ff6b7a;
   --z-max: 1180px;
   --z-mono: "JetBrains Mono", "SF Mono", Consolas, ui-monospace, monospace;
-  --z-sans:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    "Helvetica Neue",
-    Helvetica,
-    Arial,
-    sans-serif;
+  --z-sans: "Instrument Sans", "Segoe UI", sans-serif;
+  --z-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --z-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.85  0 0 0 0 0.95  0 0 0 0 1  0 0 0 0.11 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  color-scheme: dark;
 }
 
 html {
@@ -60,7 +59,7 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--z-accent) 22%, transparent);
+  background: rgb(212 245 122 / 0.28);
   color: var(--z-ink);
 }
 
@@ -80,7 +79,17 @@ code {
 .zttp-home {
   min-width: 320px;
   margin: 0;
-  background: var(--z-bg);
+  /* The page colour comes from html, so the drifting aurora behind the body
+     (.zttp-home::before, below) shows through these layers. */
+  background:
+    var(--z-grain),
+    radial-gradient(70rem 44rem at 8% -8%, rgb(79 149 255 / 0.24), transparent
+    62%),
+    radial-gradient(56rem 40rem at 100% 14%, rgb(0 191 222 / 0.13), transparent
+    60%),
+    radial-gradient(48rem 36rem at 60% 105%, rgb(212 245 122 / 0.07),
+    transparent 60%);
+  background-attachment: fixed;
   color: var(--z-ink);
   font-family: var(--z-sans);
   font-size: 16px;
@@ -122,13 +131,12 @@ code {
   z-index: 1000;
   transform: translateY(-150%);
   background: var(--z-ink);
-  color: var(--z-paper);
   font-weight: 600;
   padding: 0.65rem 1rem;
 }
 
 .zttp-home .skip-link {
-  color: var(--z-paper);
+  color: var(--z-bg);
 }
 
 .skip-link:focus {
@@ -141,7 +149,8 @@ code {
   top: 0;
   z-index: 20;
   border-bottom: 1px solid var(--z-line);
-  background: rgb(255 255 255 / 0.98);
+  background: rgb(5 24 32 / 0.7);
+  backdrop-filter: blur(14px) saturate(1.2);
 }
 
 .z-nav {
@@ -175,7 +184,7 @@ code {
 }
 
 .z-brand small {
-  border: 1px solid var(--z-line);
+  border: 1px solid var(--z-line-strong);
   color: var(--z-muted);
   font-size: 0.7rem;
   font-weight: 650;
@@ -187,7 +196,7 @@ code {
   display: flex;
   align-items: center;
   gap: 2rem;
-  color: #505056;
+  color: var(--z-ink-soft);
   font-size: 0.875rem;
 }
 
@@ -207,11 +216,16 @@ code {
   justify-content: center;
   min-height: 2.75rem;
   padding: 0 1.1rem;
-  border: 1px solid var(--z-ink);
+  border: 1px solid var(--z-accent);
   background: var(--z-paper);
-  color: var(--z-ink);
   font-size: 0.875rem;
   font-weight: 650;
+}
+
+/* Beats `.zttp-home a { color: inherit }` and the mobile menu link border. */
+.zttp-home .z-nav-primary {
+  border-color: var(--z-accent);
+  color: var(--z-accent);
 }
 
 .zttp-home .z-nav-primary:hover {
@@ -282,10 +296,10 @@ code {
   align-items: center;
   gap: 0.6rem;
   margin: 0 0 1.4rem;
-  color: var(--z-accent);
+  color: var(--z-muted);
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
@@ -299,6 +313,7 @@ code {
 
 .z-dot-safe {
   background: var(--z-green);
+  box-shadow: 0 0 10px rgb(212 245 122 / 0.6);
 }
 
 .z-dot-review {
@@ -318,24 +333,32 @@ code {
 .z-final-cta h2 {
   margin: 0;
   color: var(--z-ink);
-  font-weight: 650;
-  letter-spacing: -0.065em;
-  line-height: 1.02;
+  font-family: var(--z-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1;
   text-wrap: balance;
 }
 
 .z-hero h1 {
-  max-width: 12ch;
-  font-size: clamp(3.4rem, 6.2vw, 5rem);
-  font-weight: 750;
-  letter-spacing: -0.075em;
-  line-height: 0.95;
+  position: relative;
+  max-width: 13ch;
+  padding-bottom: 0.08em;
+  /* The headline ends proven: ice fading to lime at "proves it." */
+  background: linear-gradient(172deg, var(--z-ink) 58%, #e4fbb0 78%,
+    var(--z-green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(3.6rem, 6.3vw, 5.6rem);
+  letter-spacing: -0.02em;
 }
 
 .z-hero-lede {
   max-width: 40rem;
   margin: 1.6rem 0 0;
-  color: var(--z-muted);
+  color: var(--z-ink-soft);
   font-size: 1.125rem;
   line-height: 1.6;
 }
@@ -369,10 +392,11 @@ code {
   font-size: 0.875rem;
   font-weight: 650;
   transition:
-    transform 0.2s ease,
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
     background 0.2s ease,
     border-color 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .z-button:hover {
@@ -380,17 +404,20 @@ code {
 }
 
 .zttp-home .z-button-primary {
-  background: var(--z-ink);
-  color: #fff;
-}
-
-.z-button-primary:hover {
   border-color: var(--z-accent);
   background: var(--z-accent);
+  color: var(--z-bg);
+}
+
+.zttp-home .z-button-primary:hover {
+  border-color: var(--z-green);
+  background: var(--z-green);
+  color: var(--z-bg);
 }
 
 .z-button-secondary {
-  background: var(--z-paper);
+  border-color: var(--z-line-strong);
+  background: transparent;
   color: var(--z-ink);
 }
 
@@ -412,10 +439,12 @@ code {
   max-width: 12ch;
   margin: 0;
   color: var(--z-ink);
+  font-family: var(--z-serif);
   font-size: clamp(3rem, 9vw, 6.25rem);
-  font-weight: 750;
-  letter-spacing: -0.075em;
-  line-height: 0.94;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1;
   text-wrap: balance;
 }
 
@@ -434,7 +463,8 @@ code {
   max-width: 46rem;
   margin-top: 1.25rem;
   border: 1px solid var(--z-line);
-  background: var(--z-paper-muted);
+  background: var(--z-glass);
+  backdrop-filter: blur(10px);
   padding: 0.6rem 0.6rem 0.6rem 0.9rem;
 }
 
@@ -496,8 +526,12 @@ code {
 }
 
 .z-code-card {
+  position: relative;
+  overflow: hidden;
   min-width: 0;
-  background: var(--z-terminal);
+  background: rgb(3 17 26 / 0.78);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 40px 120px -40px rgb(79 149 255 / 0.45);
 }
 
 .z-pane-title {
@@ -580,6 +614,7 @@ code {
 
 .z-playground .z-heading-wide p {
   margin-top: 1.25rem;
+  color: var(--z-ink-soft);
 }
 
 .z-section-heading {
@@ -590,7 +625,7 @@ code {
 .z-section-intro {
   max-width: 46rem;
   margin: 1.25rem 0 0;
-  color: var(--z-muted);
+  color: var(--z-ink-soft);
   font-size: 1rem;
   line-height: 1.7;
 }
@@ -603,7 +638,7 @@ code {
 .z-heading-wide h2,
 .z-section-heading h2,
 .z-final-cta h2 {
-  font-size: clamp(2.4rem, 5vw, 4.25rem);
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
 }
 
 .z-heading-wide p,
@@ -629,6 +664,8 @@ code {
   align-items: center;
   gap: 0.45rem;
   border: 1px solid var(--z-line);
+  background: var(--z-glass);
+  backdrop-filter: blur(10px);
   padding: 0.4rem 0.7rem;
 }
 
@@ -663,6 +700,14 @@ code {
   color: var(--z-accent);
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.z-workflow li[data-state="draft"] span {
+  color: var(--z-red);
+}
+
+.z-workflow li[data-state="repair"] span {
+  color: var(--z-yellow);
 }
 
 .z-workflow li[data-state="write"] span {
@@ -707,13 +752,14 @@ code {
 .z-page-detail {
   border-right: 1px solid var(--z-line);
   border-bottom: 1px solid var(--z-line);
-  background: var(--z-paper);
+  background: var(--z-glass);
+  backdrop-filter: blur(10px);
   transition: background 0.2s ease;
 }
 
 .z-page-detail:hover,
 .z-page-detail[open] {
-  background: var(--z-accent-soft);
+  background: rgb(186 232 244 / 0.08);
 }
 
 .z-page-detail summary {
@@ -818,11 +864,11 @@ code {
 }
 
 .z-evidence-levels [data-tier="thin"] h3 {
-  color: #8a6200;
+  color: var(--z-yellow);
 }
 
 .z-evidence-levels [data-tier="unmeasured"] h3 {
-  color: var(--z-accent);
+  color: var(--z-red);
 }
 
 .z-evidence-levels p,
@@ -849,7 +895,16 @@ code {
   gap: 2.5rem;
   align-items: center;
   margin-top: 3rem;
-  background: var(--z-terminal);
+  border: 1px solid var(--z-line);
+  /* The logo's drafting grid, faintly, under a blue glow. */
+  background:
+    linear-gradient(rgb(91 157 255 / 0.06) 1px, transparent 1px) 0 0 / 22px
+    22px,
+    linear-gradient(90deg, rgb(91 157 255 / 0.06) 1px, transparent 1px) 0 0 /
+    22px 22px,
+    radial-gradient(40rem 20rem at 0% 0%, rgb(79 149 255 / 0.18), transparent
+    70%),
+    var(--z-terminal);
   padding: 2rem;
 }
 
@@ -861,9 +916,12 @@ code {
 .z-proof-carrier h3 {
   margin: 0;
   color: #fff;
+  font-family: var(--z-serif);
   font-size: 1.9rem;
-  font-weight: 650;
-  letter-spacing: -0.045em;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1;
 }
 
 .z-proof-carrier p:not(.z-section-kicker) {
@@ -896,8 +954,12 @@ code {
 
 .z-final-cta {
   margin-bottom: 4rem;
-  border-top: 0;
-  background: var(--z-terminal);
+  border: 1px solid var(--z-line);
+  background:
+    var(--z-grain),
+    radial-gradient(50rem 26rem at 50% 0%, rgb(255 138 61 / 0.16), transparent
+    70%),
+    var(--z-terminal);
   padding-top: 4.5rem;
   padding-bottom: 4.5rem;
   text-align: center;
@@ -921,15 +983,15 @@ code {
 }
 
 .z-final-cta .z-button-primary {
-  border-color: #fff;
-  background: #fff;
-  color: var(--z-ink);
+  border-color: var(--z-accent);
+  background: var(--z-accent);
+  color: var(--z-bg);
 }
 
 .z-final-cta .z-button-primary:hover {
-  border-color: var(--z-accent);
-  background: var(--z-accent);
-  color: #fff;
+  border-color: var(--z-green);
+  background: var(--z-green);
+  color: var(--z-bg);
 }
 
 .z-final-cta .z-button-secondary {
@@ -1022,7 +1084,7 @@ code {
   flex-wrap: wrap;
   gap: 1rem 2rem;
   border-top: 1px solid var(--z-line);
-  color: #606066;
+  color: var(--z-muted);
   font-size: 0.82rem;
   padding-top: 2.25rem;
   padding-bottom: 2.25rem;
@@ -1150,14 +1212,9 @@ code {
   }
 
   .z-hero h1 {
-    max-width: 100%;
-    font-size: clamp(2.7rem, 12.4vw, 3.25rem);
-    letter-spacing: -0.05em;
+    font-size: clamp(3rem, 14vw, 4rem);
+    letter-spacing: -0.015em;
     overflow-wrap: anywhere;
-  }
-
-  .z-not-found h1 {
-    letter-spacing: -0.05em;
   }
 
   .z-eyebrow,
@@ -1229,13 +1286,6 @@ code {
   .z-section {
     padding-top: 3rem;
     padding-bottom: 3rem;
-  }
-
-  .z-heading-wide h2,
-  .z-section-heading h2,
-  .z-final-cta h2 {
-    font-size: 2.65rem;
-    letter-spacing: -0.05em;
   }
 
   .z-workflow,
@@ -1316,16 +1366,6 @@ code {
 }
 
 @media (max-width: 460px) {
-  .z-hero h1 {
-    font-size: 2.7rem;
-  }
-
-  .z-heading-wide h2,
-  .z-section-heading h2,
-  .z-final-cta h2 {
-    font-size: 2.35rem;
-  }
-
   .z-product-shot figcaption {
     font-size: 0.78rem;
   }
@@ -1513,7 +1553,7 @@ code {
 .zp-demo-replay {
   border-color: var(--z-accent);
   background: var(--z-accent);
-  color: #fff;
+  color: var(--z-bg);
   font-weight: 700;
 }
 
@@ -1560,7 +1600,7 @@ code {
 .zp-perturbations button.active {
   background: var(--z-red);
   border-color: var(--z-red);
-  color: #fff;
+  color: var(--z-bg);
 }
 
 .zp-editor {
@@ -2247,5 +2287,326 @@ button.zp-chip {
 
   .zp-chips {
     grid-template-columns: 1fr;
+  }
+}
+
+/* --- Deep Field: signatures and motion ---
+   Each effect carries a product meaning, animates transform, opacity, or a
+   shadow only, and stops under prefers-reduced-motion (end of this section). */
+
+html {
+  scrollbar-color: var(--z-terminal-3) var(--z-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--z-accent);
+  outline-offset: 3px;
+}
+
+/* The aurora drifts behind the page, slowly. */
+.zttp-home::before {
+  content: "";
+  position: fixed;
+  inset: -20vmax;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(36vmax 28vmax at 30% 30%, rgb(79 149 255 / 0.16),
+    transparent 70%),
+    radial-gradient(30vmax 24vmax at 72% 62%, rgb(0 191 222 / 0.1), transparent
+    70%),
+    radial-gradient(24vmax 20vmax at 55% 85%, rgb(212 245 122 / 0.06),
+    transparent 70%);
+  animation: z-drift 38s ease-in-out infinite alternate;
+}
+
+@keyframes z-drift {
+  to {
+    transform: translate3d(4vmax, -3vmax, 0) rotate(8deg) scale(1.08);
+  }
+}
+
+/* The logo's three speed streaks trail into the headline. */
+.z-hero h1::before {
+  content: "";
+  display: block;
+  width: 7.5rem;
+  height: 0.9rem;
+  margin-bottom: 1.2rem;
+  background:
+    linear-gradient(90deg, transparent, var(--z-accent)) 100% 0 / 100% 3px
+    no-repeat,
+    linear-gradient(90deg, transparent, var(--z-accent)) 100% 50% / 64% 3px
+    no-repeat,
+    linear-gradient(90deg, transparent, var(--z-accent-light)) 100% 100% / 82%
+    3px no-repeat;
+  transform-origin: right center;
+  animation: z-streak 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes z-streak {
+  from {
+    opacity: 0;
+    transform: translateX(-2.5rem) scaleX(0.2);
+  }
+}
+
+@media (min-width: 1260px) {
+  .z-hero h1::before {
+    position: absolute;
+    top: 0.42em;
+    right: calc(100% + 1.4rem);
+    margin: 0;
+  }
+}
+
+/* The closing panel repeats the streaks on both sides of its label. */
+.z-final-cta .z-section-kicker::before,
+.z-final-cta .z-section-kicker::after {
+  content: "";
+  width: 3.2rem;
+  height: 0.55rem;
+  background:
+    linear-gradient(90deg, transparent, var(--z-accent)) 100% 0 / 100% 2px
+    no-repeat,
+    linear-gradient(90deg, transparent, var(--z-accent)) 100% 50% / 64% 2px
+    no-repeat,
+    linear-gradient(90deg, transparent, var(--z-accent-light)) 100% 100% / 82%
+    2px no-repeat;
+}
+
+.z-final-cta .z-section-kicker::after {
+  transform: scaleX(-1);
+}
+
+/* The transcript: one simulation sweep, then the proof lights up. */
+.z-code-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 38%;
+  pointer-events: none;
+  border-bottom: 1px solid rgb(186 232 244 / 0.35);
+  background: linear-gradient(180deg, transparent, rgb(186 232 244 / 0.07) 70%,
+    rgb(186 232 244 / 0.16));
+  transform: translateY(-110%);
+  animation: z-sweep 2.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s 1 both;
+}
+
+@keyframes z-sweep {
+  0% {
+    opacity: 1;
+    transform: translateY(-110%);
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(270%);
+  }
+}
+
+.z-code-card .z-err {
+  color: var(--z-red);
+  text-shadow: 0 0 14px rgb(255 107 122 / 0.45);
+}
+
+.z-code-card .z-safe {
+  color: var(--z-green);
+  animation: z-proven 1.2s ease-out 2.7s both;
+}
+
+@keyframes z-proven {
+  from {
+    text-shadow: 0 0 0 transparent;
+  }
+
+  40% {
+    text-shadow: 0 0 22px rgb(212 245 122 / 0.9);
+  }
+
+  to {
+    text-shadow: 0 0 10px rgb(212 245 122 / 0.35);
+  }
+}
+
+/* Live status dots breathe. */
+.z-hero .z-dot-safe,
+.z-playground .z-section-kicker .z-dot-safe {
+  animation: z-halo 2.8s ease-out infinite;
+}
+
+@keyframes z-halo {
+  0% {
+    box-shadow: 0 0 0 0 rgb(212 245 122 / 0.55);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.6rem rgb(212 245 122 / 0);
+  }
+}
+
+/* The write path runs from a vetoed draft to a proven write. */
+.z-workflow {
+  position: relative;
+}
+
+.z-workflow::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, var(--z-red), var(--z-accent) 35%,
+    var(--z-yellow) 62%, var(--z-green));
+}
+
+/* Rows: a streak slides in under the row you point at. */
+.z-feature-rows article,
+.z-evidence-levels article {
+  position: relative;
+}
+
+.z-feature-rows article::after,
+.z-evidence-levels article::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--z-accent) 60%,
+    var(--z-accent-light));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .z-feature-rows article:hover::after,
+  .z-evidence-levels article:hover::after {
+    transform: scaleX(1);
+  }
+
+  .z-feature-rows article:hover h3 {
+    color: var(--z-accent-light);
+  }
+
+  .zttp-home .z-button-primary {
+    box-shadow: 0 10px 30px -12px rgb(255 138 61 / 0.7);
+  }
+
+  .zttp-home .z-button-primary:hover {
+    box-shadow: 0 12px 34px -12px rgb(212 245 122 / 0.7);
+  }
+}
+
+/* Section headings rise into place as they scroll in. */
+@supports (animation-timeline: view()) {
+  .z-section-heading,
+  .z-heading-wide {
+    animation: z-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+
+  @keyframes z-rise {
+    from {
+      opacity: 0;
+      transform: translateY(2.5rem);
+    }
+  }
+}
+
+/* Proof juice (static/proof-juice.js): the particle layer, the verdict pop
+   on PROVEN, and the card shake on BLOCKED. */
+.z-juice {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.zp-verdict {
+  display: inline-block;
+}
+
+.zp-verdict.z-pop {
+  animation: z-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes z-pop {
+  35% {
+    transform: scale(1.28);
+  }
+}
+
+.zp-card.z-shake {
+  animation: z-shake 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes z-shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+
+  20%,
+  80% {
+    transform: translateX(3px);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translateX(-5px);
+  }
+
+  40%,
+  60% {
+    transform: translateX(5px);
+  }
+}
+
+/* Press squash: controls give under the finger and spring back. */
+.zp-demo-replay,
+.zp-perturbations button,
+.z-install-card button {
+  transition:
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.z-button:active,
+.zp-demo-replay:active,
+.zp-perturbations button:active,
+.z-install-card button:active {
+  transform: scale(0.95);
+  transition-duration: 0.06s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zttp-home::before,
+  .z-hero h1::before,
+  .z-code-card .z-safe,
+  .z-hero .z-dot-safe,
+  .z-playground .z-section-kicker .z-dot-safe,
+  .z-section-heading,
+  .z-heading-wide,
+  .zp-verdict.z-pop,
+  .zp-card.z-shake {
+    animation: none;
+  }
+
+  .z-code-card::after {
+    display: none;
   }
 }

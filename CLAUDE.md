@@ -30,6 +30,11 @@ step, no framework.
 - `static/playground.js` - drives the homepage proof playground: loads the wasm
   analyzer, runs it on editor input, renders the proof card. The section
   degrades to a static pre-rendered card without it.
+- `static/proof-juice.js` - optional game feel for the playground: a pooled
+  particle burst on a transparent canvas when the verdict flips (lime on PROVEN,
+  rose on BLOCKED). Watches `.zp-verdict` and touches nothing else, so it stays
+  out of the `script.js` and `playground.js` test harnesses. Does nothing
+  without JS or under reduced motion.
 - `static/zts-analyzer.*.wasm` - the zts analyzer compiled to WebAssembly. Built
   in the zttp repo by `zig build wasm` and published here by its
   `scripts/build-wasm-playground.sh`; the content hash in the filename is

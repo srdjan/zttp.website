@@ -4,3 +4,4 @@ codedb.snapshot
 .playwright-mcp/
 node_modules/
 .claude/settings.local.json
+demos/

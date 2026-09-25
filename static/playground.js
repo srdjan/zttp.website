@@ -3,7 +3,7 @@
 // script: the section ships a pre-rendered proven card and a plain editor.
 //
 // WASM_URL is patched by scripts/build-wasm-playground.sh on every build.
-const WASM_URL = "/zts-analyzer.18ca4a473e3e.wasm";
+const WASM_URL = "/zts-analyzer.85b8ac568655.wasm";
 
 (function () {
   "use strict";

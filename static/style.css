@@ -835,13 +835,11 @@ code {
   margin-top: 0;
 }
 
-.z-evidence-levels,
-.z-feature-rows {
+.z-evidence-levels {
   border-top: 1px solid var(--z-line);
 }
 
-.z-evidence-levels article,
-.z-feature-rows article {
+.z-evidence-levels article {
   display: grid;
   grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 1fr);
   gap: 2rem;
@@ -850,8 +848,7 @@ code {
   padding: 1.4rem 0;
 }
 
-.z-evidence-levels h3,
-.z-feature-rows h3 {
+.z-evidence-levels h3 {
   margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
@@ -871,22 +868,11 @@ code {
   color: var(--z-red);
 }
 
-.z-evidence-levels p,
-.z-feature-rows p {
+.z-evidence-levels p {
   margin: 0;
   color: var(--z-muted);
   font-size: 0.95rem;
   line-height: 1.6;
-}
-
-.z-feature-rows code {
-  color: var(--z-accent);
-  font-size: 0.86em;
-}
-
-.z-feature-rows + .z-first-proof {
-  max-width: none;
-  margin: 2.5rem 0 0;
 }
 
 .z-proof-carrier {
@@ -1303,8 +1289,7 @@ code {
     padding-left: 0;
   }
 
-  .z-evidence-levels article,
-  .z-feature-rows article {
+  .z-evidence-levels article {
     grid-template-columns: 1fr;
     gap: 0.4rem;
   }
@@ -2465,12 +2450,10 @@ html {
 }
 
 /* Rows: a streak slides in under the row you point at. */
-.z-feature-rows article,
 .z-evidence-levels article {
   position: relative;
 }
 
-.z-feature-rows article::after,
 .z-evidence-levels article::after {
   content: "";
   position: absolute;
@@ -2486,13 +2469,8 @@ html {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .z-feature-rows article:hover::after,
   .z-evidence-levels article:hover::after {
     transform: scaleX(1);
-  }
-
-  .z-feature-rows article:hover h3 {
-    color: var(--z-accent-light);
   }
 
   .zttp-home .z-button-primary {

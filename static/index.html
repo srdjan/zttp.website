@@ -73,7 +73,7 @@
       "url": "https://zigttp.timok.com",
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "Agent-Compiler, TypeScript Proof Engine, CLI Tool",
-      "keywords": "agent-compiler, compiler-in-the-loop agent, provable TypeScript, model-free repair, typed counterexamples, zts, compile-time proof, AI code verification, proof receipt, capability sandbox, agent tool routes, application invariants, Zig runtime, serverless functions",
+      "keywords": "agent-compiler, compiler-in-the-loop agent, provable TypeScript, model-free repair, typed counterexamples, zts, compile-time proof, AI code verification, proof receipt, capability sandbox, Zig runtime, serverless functions",
       "operatingSystem": "Linux, macOS",
       "license": "https://opensource.org/licenses/MIT",
       "programmingLanguage": ["Zig", "TypeScript"],
@@ -103,7 +103,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=29">
+    <link rel="stylesheet" href="/style.css?v=30">
   </head>
   <body class="zttp-home">
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -586,109 +586,6 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
                 <strong>zttp:</strong> the compiler is an agent too. It shares
                 the only write path with the model and writes its own repairs.
               </p>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <section class="z-section" id="tools">
-        <div class="z-section-heading">
-          <p class="z-section-kicker">
-            <span class="z-status-dot z-dot-safe"></span>
-            New in 0.21
-          </p>
-          <h2>Turn a handler into a tool an agent can call.</h2>
-          <p class="z-section-intro">
-            A tool route is an HTTP endpoint for model and agent callers. You
-            describe each tool once, and the runtime checks every call on the
-            way in and on the way out.
-          </p>
-        </div>
-
-        <div class="z-feature-rows">
-          <article>
-            <h3>Checked input and output</h3>
-            <p>
-              Each tool declares a closed JSON schema for what it accepts and
-              what it returns. A bad request gets a 400 before your code runs,
-              and a bad answer becomes a 500 instead of reaching the caller.
-            </p>
-          </article>
-          <article>
-            <h3>Verified callers</h3>
-            <p>
-              Every call carries a signed token. The runtime checks it, gives
-              your handler the caller and tenant, and answers 403 when a request
-              asks for another tenant's data.
-            </p>
-          </article>
-          <article>
-            <h3>Keys your code never sees</h3>
-            <p>
-              Name an API key in <code>zttp.json</code>. The runtime adds it only
-              to requests for the endpoint, methods, and paths you allow, so the
-              handler never holds the value.
-            </p>
-          </article>
-          <article>
-            <h3>Ledgers that stay balanced</h3>
-            <p>
-              Declare that every currency in a ledger sums to zero. zttp checks
-              each posting before it commits and refuses one that breaks the
-              rule, with nothing written.
-            </p>
-          </article>
-        </div>
-
-        <div class="z-first-proof">
-          <pre><code><span class="z-cmd">import</span> { toolCatalog, toolInput } <span class="z-cmd">from</span> <span class="z-str">"zttp:tool"</span>;
-
-toolCatalog({
-  convert: {
-    route: <span class="z-str">"POST /tools/convert"</span>,
-    description: <span class="z-str">"Convert a temperature between Celsius, Fahrenheit, and Kelvin."</span>,
-    input: <span class="z-str">"ConvertInput"</span>,
-    output: <span class="z-str">"ConvertOutput"</span>,
-    maxInputBytes: 128
-  }
-});</code></pre>
-          <p>
-            One declaration per tool. <code>examples/tools</code> is a complete
-            project with two tools.
-          </p>
-        </div>
-
-        <div class="z-detail-grid">
-          <details class="z-page-detail">
-            <summary>How a tool call is checked</summary>
-            <div>
-              <p>
-                The runtime refuses an input over the byte limit (413) or one
-                the schema rejects (400), verifies the caller's token (401), and
-                checks the tenant field (403), all before the handler runs. Each
-                tool may call only the modules its own route reaches.
-              </p>
-              <a
-                href="https://github.com/srdjan/zttp/blob/main/docs/user-guide.md#tool-routes"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Read the tool route guide</a>
-            </div>
-          </details>
-
-          <details class="z-page-detail">
-            <summary>What a ledger invariant does not prove</summary>
-            <div>
-              <p>
-                Balance conservation means the balances in each currency always
-                sum to zero. It does not prove correct recipients,
-                authorization, sufficient funds, or correct business amounts.
-              </p>
-              <a
-                href="https://github.com/srdjan/zttp/blob/main/docs/user-guide.md#application-invariants"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Read the invariants guide</a>
             </div>
           </details>
         </div>

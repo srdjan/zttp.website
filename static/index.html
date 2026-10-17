@@ -103,7 +103,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=30">
+    <link rel="stylesheet" href="/style.css?v=31">
   </head>
   <body class="zttp-home">
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -127,7 +127,7 @@
           <span aria-hidden="true"></span>
         </button>
         <div class="z-nav-links" id="z-nav-links">
-          <a href="#playground">Try</a>
+          <a href="#proof">Proof</a>
           <a
             href="https://github.com/srdjan/zttp/tree/main/docs"
             target="_blank"
@@ -157,8 +157,8 @@
             and it fixes the mistakes it knows without another model call.
           </p>
           <div class="z-hero-actions">
-            <a class="z-button z-button-primary" href="#playground"
-            >Try it in your browser</a>
+            <a class="z-button z-button-primary" href="#proof"
+            >See a proof break</a>
           </div>
           <div class="z-install-card" role="group" aria-label="Install command">
             <span class="z-prompt">$</span>
@@ -203,133 +203,27 @@
         </figure>
       </section>
 
-      <section class="z-section z-playground" id="playground">
-        <p class="z-section-kicker">
-          <span class="z-status-dot z-dot-safe"></span>
-          Runs in your browser
-        </p>
-        <div class="z-heading-wide">
-          <h2>Break a proof in your browser.</h2>
-          <p>
-            Change the code or pick a way to break it. The real analyzer runs on
-            this page as WebAssembly and tells you which guarantee broke and on
-            which line. Your code stays in your browser. The fix buttons replay
-            repairs the compiler made in recorded sessions.
+      <section class="z-section" id="proof">
+        <div class="z-section-heading">
+          <p class="z-section-kicker">
+            <span class="z-status-dot z-dot-review"></span>
+            Real analyzer output
+          </p>
+          <h2>Break one guarantee. The compiler names it.</h2>
+          <p class="z-section-intro">
+            This handler declares three guarantees and returns an environment
+            secret in its response. <code>zts check</code> refuses it and names
+            the guarantee that broke.
           </p>
         </div>
 
-        <div
-          class="z-calm-strip"
-          role="group"
-          aria-label="Playground trust boundaries"
-        >
-          <span><i class="z-status-dot z-dot-safe"></i>Real analyzer</span>
-          <span><i class="z-status-dot z-dot-idle"></i>Runs locally</span>
-          <span><i class="z-status-dot z-dot-review"></i>Nothing uploaded</span>
-        </div>
+        <figure class="z-product-shot">
+          <div class="z-code-card">
+            <div class="z-pane-title">
+              <span>handler.ts</span>
+            </div>
+            <pre><code>import { env } from "zttp:env";
 
-        <div class="zp-grid">
-          <div class="zp-editor-col">
-            <div class="zp-tabs" role="tablist" aria-label="Example handler">
-              <button
-                type="button"
-                class="zp-tab active"
-                data-seed="proof"
-                id="zp-seed-tab-proof"
-                role="tab"
-                aria-selected="true"
-                aria-controls="zp-editor-panel"
-                tabindex="0"
-              >
-                <code>Proof&lt;T, P&gt;</code>: 3 guarantees
-              </button>
-              <button
-                type="button"
-                class="zp-tab"
-                data-seed="default"
-                id="zp-seed-tab-default"
-                role="tab"
-                aria-selected="false"
-                aria-controls="zp-editor-panel"
-                tabindex="-1"
-              >
-                Default: all 7
-              </button>
-            </div>
-            <div class="zp-toolbar">
-              <span class="zp-file">
-                <span class="z-status-dot z-dot-idle"></span> handler.ts
-              </span>
-              <div class="zp-demo-controls">
-                <button type="button" class="zp-demo-replay">
-                  Watch it break and get fixed
-                </button>
-                <span class="zp-demo-state" aria-live="polite"
-                >proof engine idle</span>
-                <button type="button" class="zp-retry" hidden>
-                  Retry the analyzer
-                </button>
-              </div>
-              <button type="button" class="zp-reset" hidden>
-                Reset example
-              </button>
-              <details class="zp-more-examples">
-                <summary>More ways to break it</summary>
-                <div
-                  class="zp-perturbations"
-                  role="group"
-                  aria-label="Perturbations"
-                >
-                  <button
-                    type="button"
-                    data-perturb="datenow"
-                    data-label="Inject Date.now()"
-                    data-revert-label="Revert Date.now()"
-                    aria-pressed="false"
-                  >
-                    Inject Date.now()
-                  </button>
-                  <button
-                    type="button"
-                    data-perturb="secret"
-                    data-label="Leak a secret"
-                    data-revert-label="Undo secret leak"
-                    aria-pressed="false"
-                  >
-                    Leak a secret
-                  </button>
-                  <button
-                    type="button"
-                    data-perturb="while"
-                    data-label="Add a while loop"
-                    data-revert-label="Remove while loop"
-                    aria-pressed="false"
-                  >
-                    Add a while loop
-                  </button>
-                </div>
-              </details>
-            </div>
-            <div
-              class="zp-editor"
-              id="zp-editor-panel"
-              role="tabpanel"
-              aria-labelledby="zp-seed-tab-proof"
-            >
-              <pre
-                class="zp-highlight"
-                aria-hidden="true"
-              ><code id="zp-hl"></code></pre>
-              <textarea
-                id="zp-src"
-                class="zp-src"
-                spellcheck="false"
-                autocomplete="off"
-                autocapitalize="off"
-                readonly
-                aria-label="Handler source code"
-              >// All guarantees are enforced by default. This Proof&lt;T, P&gt;
-// narrows enforcement to these three; break one and the card flips red.
 structural Guardrails&lt;T&gt; = Proof&lt;T,
   | "deterministic"
   | "no_secret_leakage"
@@ -337,179 +231,47 @@ structural Guardrails&lt;T&gt; = Proof&lt;T,
 &gt;;
 
 function handler(req: Request): Guardrails&lt;Response&gt; {
-  return Response.json({ ok: true });
-}
-</textarea>
-            </div>
+  const key = env("API_KEY") ?? "";
+  return Response.json({ ok: true, key: key });
+}</code></pre>
           </div>
 
-          <figure class="zp-card zp-ok" id="zp-card">
-            <div class="zp-head zp-ok">
-              <span class="zp-verdict" aria-live="polite">PROVEN</span>
-              <strong class="zp-count">3 of 3 chosen guarantees proven</strong>
-              <span class="zp-scope">6 of 7 guarantees hold</span>
-              <span class="zp-live-readout">
-                <span
-                  class="z-status-dot z-dot-safe zp-live-dot"
-                  aria-hidden="true"
-                ></span>
-                <span class="zp-status">pre-rendered proof preview</span>
-              </span>
+          <div class="z-code-card">
+            <div class="z-pane-title">
+              <span>zts check handler.ts</span>
             </div>
+            <pre><code>check: handler.ts
 
-            <div class="zp-lensbar" role="tablist" aria-label="Proof lens">
-              <button
-                type="button"
-                data-lens="properties"
-                id="zp-lens-tab-properties"
-                class="active"
-                role="tab"
-                aria-selected="true"
-                aria-controls="zp-lens-properties"
-                tabindex="0"
-              >
-                Guarantees
-              </button>
-              <button
-                type="button"
-                data-lens="trade"
-                id="zp-lens-tab-trade"
-                role="tab"
-                aria-selected="false"
-                aria-controls="zp-lens-trade"
-                tabindex="-1"
-              >
-                Trade-offs
-              </button>
-              <button
-                type="button"
-                data-lens="handover"
-                id="zp-lens-tab-handover"
-                role="tab"
-                aria-selected="false"
-                aria-controls="zp-lens-handover"
-                tabindex="-1"
-              >
-                Certificate
-              </button>
-              <button
-                type="button"
-                data-lens="caller"
-                id="zp-lens-tab-caller"
-                role="tab"
-                aria-selected="false"
-                aria-controls="zp-lens-caller"
-                tabindex="-1"
-              >
-                Callers
-              </button>
+  Security:
+    no_secret_leakage ... ---
+    no_credential_leak .. <span class="z-safe">PROVEN</span>
+    input_validated ..... <span class="z-safe">PROVEN</span>
+
+  Spec diagnostics:
+<span class="z-err">    ZTS500 (error) handler.ts:9:17  declared Proof capsule was not discharged by handler proof (failing spec: no_secret_leakage)</span></code></pre>
+          </div>
+
+          <div class="z-code-card">
+            <div class="z-pane-title">
+              <span>zts check --json handler.ts</span>
             </div>
-
-            <div
-              class="zp-lens"
-              data-lens="properties"
-              id="zp-lens-properties"
-              role="tabpanel"
-              aria-labelledby="zp-lens-tab-properties"
-            >
-              <ul class="zp-chips">
-                <li class="zp-chip on">
-                  <span class="zp-glyph">+</span><span class="zp-chip-label"
-                  >deterministic</span>
-                </li>
-                <li class="zp-chip on">
-                  <span class="zp-glyph">+</span><span class="zp-chip-label"
-                  >read-only</span>
-                </li>
-                <li class="zp-chip on">
-                  <span class="zp-glyph">+</span><span class="zp-chip-label"
-                  >state-isolated</span>
-                </li>
-                <li class="zp-chip on">
-                  <span class="zp-glyph">+</span><span class="zp-chip-label"
-                  >injection-safe</span>
-                </li>
-                <li class="zp-chip on">
-                  <span class="zp-glyph">+</span><span class="zp-chip-label"
-                  >retry-safe</span>
-                </li>
-                <li class="zp-chip on">
-                  <span class="zp-glyph">+</span><span class="zp-chip-label"
-                  >idempotent</span>
-                </li>
-                <li class="zp-chip off">
-                  <span class="zp-glyph">-</span><span class="zp-chip-label"
-                  >fault-covered</span>
-                </li>
-              </ul>
-              <div class="zp-specs">
-                <span class="zp-specs-label">declared Proof&lt;&gt;</span>
-                <span class="zp-spec on">deterministic</span>
-                <span class="zp-spec on">no_secret_leakage</span>
-                <span class="zp-spec on">injection_safe</span>
-              </div>
-              <p class="zp-foot-note">
-                <code>fault-covered</code> requires a proven recovery path.
-              </p>
-            </div>
-
-            <div
-              class="zp-lens"
-              data-lens="trade"
-              id="zp-lens-trade"
-              role="tabpanel"
-              aria-labelledby="zp-lens-tab-trade"
-              hidden
-            >
-              <ul class="zp-trade"></ul>
-            </div>
-
-            <div
-              class="zp-lens"
-              data-lens="handover"
-              id="zp-lens-handover"
-              role="tabpanel"
-              aria-labelledby="zp-lens-tab-handover"
-              hidden
-            >
-              <pre
-                class="zp-cert"
-              >Break the code above, then read its certificate here.</pre>
-              <button type="button" class="zp-copy">Copy certificate</button>
-            </div>
-
-            <div
-              class="zp-lens"
-              data-lens="caller"
-              id="zp-lens-caller"
-              role="tabpanel"
-              aria-labelledby="zp-lens-tab-caller"
-              hidden
-            >
-              <p class="zp-caller-note">
-                What a third party sees when they verify your deploy:
-              </p>
-              <pre
-                class="zp-caller-block"
-              >HTTP/1.1 200 OK
-Zttp-Proofs: deterministic, read_only, injection_safe
-Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
-              <pre
-                class="zp-caller-block"
-              >$ zttp verify https://your-service.dev
-  Verified  key 9f2c..a1  3 proven chips
-  Policy    pinned by runtime_policy_sha256</pre>
-              <p class="zp-caller-foot">
-                The signature is checked against the public key at
-                <code>/.well-known/zttp-attest</code>. The signed envelope also
-                pins the outbound network, environment, cache, and SQL allowlist
-                that the sandbox enforces.
-              </p>
-            </div>
-
-            <div class="zp-why" hidden></div>
-          </figure>
-        </div>
+            <pre><code>{
+  "code": "ZTS400",
+  "severity": "error",
+  "message": "secret data flows into response body",
+  "file": "handler.ts",
+  "line": 11,
+  "column": 23,
+  "suggestion": "env vars with sensitive names (SECRET, PASSWORD, KEY, TOKEN) must not appear in responses"
+}</code></pre>
+          </div>
+          <figcaption>
+            Output of <code>zts check</code> from zttp 0.22 at commit
+            <code>20caa237</code>. <code>---</code> means not proven. The excerpt
+            omits the parse, verification, and property sections (all OK or
+            PROVEN), the path statistics, and the footer.
+          </figcaption>
+        </figure>
       </section>
 
       <section class="z-section" id="workflow">
@@ -756,7 +518,5 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
     </footer>
 
     <script src="/script.js?v=18" defer></script>
-    <script src="/playground.js?v=24" defer></script>
-    <script src="/proof-juice.js?v=1" defer></script>
   </body>
 </html>

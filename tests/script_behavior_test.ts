@@ -1,7 +1,7 @@
-// Behavioral tests for the scroll spy in static/script.js. Like the playground
-// harness, this evaluates the shipped source against the parsed homepage with
-// in-memory doubles for the globals it touches. The IntersectionObserver double
-// records its options and lets a test report which sections are in the band.
+// Behavioral tests for the scroll spy in static/script.js. This evaluates the
+// shipped source against the parsed homepage with in-memory doubles for the
+// globals it touches. The IntersectionObserver double records its options and
+// lets a test report which sections are in the band.
 import { DOMParser, type Element } from "@b-fuze/deno-dom";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -67,22 +67,22 @@ Deno.test("the spy fires on any overlap, so tall sections still count", () => {
 
 Deno.test("a section in the band marks its nav link", () => {
   const { spy, section, active } = boot();
-  spy.report([{ target: section("playground"), isIntersecting: true }]);
-  assert(active() === "#playground", `expected #playground, got ${active()}`);
+  spy.report([{ target: section("proof"), isIntersecting: true }]);
+  assert(active() === "#proof", `expected #proof, got ${active()}`);
 });
 
 Deno.test("the link clears when its section leaves the band", () => {
   const { spy, section, active } = boot();
-  spy.report([{ target: section("playground"), isIntersecting: true }]);
-  spy.report([{ target: section("playground"), isIntersecting: false }]);
+  spy.report([{ target: section("proof"), isIntersecting: true }]);
+  spy.report([{ target: section("proof"), isIntersecting: false }]);
   assert(active() === null, `expected no active link, got ${active()}`);
 });
 
 Deno.test("with two sections in the band, the earlier one wins", () => {
   const { spy, section, active } = boot();
   spy.report([{ target: section("install"), isIntersecting: true }]);
-  spy.report([{ target: section("playground"), isIntersecting: true }]);
-  assert(active() === "#playground", `expected #playground, got ${active()}`);
-  spy.report([{ target: section("playground"), isIntersecting: false }]);
+  spy.report([{ target: section("proof"), isIntersecting: true }]);
+  assert(active() === "#proof", `expected #proof, got ${active()}`);
+  spy.report([{ target: section("proof"), isIntersecting: false }]);
   assert(active() === "#install", `expected #install, got ${active()}`);
 });

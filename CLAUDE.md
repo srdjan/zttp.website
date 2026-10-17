@@ -10,7 +10,7 @@ step, no framework.
 - Server: single file `main.ts` - serves `static/` with security headers and
   301s the removed deck URLs to `/`.
 - Frontend: hand-written HTML, vanilla CSS (`static/style.css`), vanilla JS
-  (`static/script.js`, `static/playground.js`). No framework, no build step.
+  (`static/script.js`). No framework, no build step.
 - Hosting: Deno Deploy (`deno task deploy` runs `deno task verify` first, then
   `deployctl deploy --prod`).
 
@@ -20,25 +20,12 @@ step, no framework.
   for routing or headers.
 - `static/index.html` - landing page.
 - `static/style.css` - the only stylesheet: reset, design tokens on `:root`, and
-  every homepage and 404 rule, including the `.zp-*` proof-playground component.
-  Page rules hang off the `body.zttp-home` class. Do not introduce dead
-  selectors; remove rather than comment out.
+  every homepage and 404 rule. Page rules hang off the `body.zttp-home` class.
+  Do not introduce dead selectors; remove rather than comment out.
 - `static/script.js` - progressive enhancement only. The page must work without
-  JS. On the homepage the no-JS contract is concrete: the playground editor
-  ships `readonly` with a pre-rendered proof card, and `playground.js` adds the
-  `zp-js` class to upgrade it to an editable, syntax-highlighted state.
-- `static/playground.js` - drives the homepage proof playground: loads the wasm
-  analyzer, runs it on editor input, renders the proof card. The section
-  degrades to a static pre-rendered card without it.
-- `static/proof-juice.js` - optional game feel for the playground: a pooled
-  particle burst on a transparent canvas when the verdict flips (lime on PROVEN,
-  rose on BLOCKED). Watches `.zp-verdict` and touches nothing else, so it stays
-  out of the `script.js` and `playground.js` test harnesses. Does nothing
-  without JS or under reduced motion.
-- `static/zts-analyzer.*.wasm` - the zts analyzer compiled to WebAssembly. Built
-  in the zttp repo by `zig build wasm` and published here by its
-  `scripts/build-wasm-playground.sh`; the content hash in the filename is
-  patched into `playground.js`. Do not hand-edit.
+  JS. On the homepage the no-JS contract is concrete: the proof section is
+  static HTML with recorded `zts check` output, and nothing in it needs a
+  script.
 - `static/404.html` - the recovery page every unknown path serves. Carries
   `noindex` (`static/404.html:11`); it is a separate document, not the landing
   page.
@@ -50,11 +37,10 @@ step, no framework.
   a route is added.
 - `tests/site_contract_test.ts` - server and markup contracts: routing, cache
   and security headers, and the no-JS enhancement contract.
-- `tests/playground_behavior_test.ts` - boots `static/playground.js` against a
-  parsed homepage with in-memory doubles, and asserts on the rendered proof
-  card. Test-only DOM; nothing here reaches the browser.
-- `tests/script_behavior_test.ts` - boots `static/script.js` the same way and
-  drives the nav scroll spy through an `IntersectionObserver` double.
+- `tests/script_behavior_test.ts` - boots `static/script.js` against a parsed
+  homepage with in-memory doubles and drives the nav scroll spy through an
+  `IntersectionObserver` double. Test-only DOM; nothing here reaches the
+  browser.
 - `docs/` - design.md, plan.md, evolution-log.md, and solutions/. Reference
   these for product intent before reshaping copy or layout.
 
@@ -90,13 +76,13 @@ leave `:8000` bound or a browser session open between turns.
   change; do not loosen CSP wholesale.
 - The CSP grants no `'unsafe-inline'` for script (`main.ts:3`), so an inline
   `<script>` or an `on*=` attribute will not execute. Put behavior in
-  `static/script.js` or `static/playground.js`.
+  `static/script.js`.
 - HTML and XML and `manifest.json` are served `no-cache`; everything else is
   immutable-cached. First-party CSS and JS are versioned with a `?v=N` query in
   the HTML references (`main.ts` serves them dynamically, so the browser keys
   its cache on the full URL and a bumped query reliably busts the immutable
-  copy); bump the number when the file changes. Rename media and wasm assets on
-  content change (content-hash the wasm) rather than query-busting them.
+  copy); bump the number when the file changes. Rename media assets on content
+  change rather than query-busting them.
 - CSS: redesign is current. Recent commits have been pruning pre-redesign rules
   (see `git log --oneline`). When touching styles, prefer deletion over
   additions; if a selector has no matching markup, drop it.

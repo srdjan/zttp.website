@@ -115,3 +115,23 @@
   fires under the production CSP
 - Guardrails: no new routes or origins; fonts come from the existing Google
   Fonts origin; the page works without JS
+
+## Iteration 7: zttp 0.22 Alignment
+
+- What changed:
+  - Removed the tool-routes and ledger-invariant section: zttp 0.22.0 removed
+    both features
+  - Removed the WebAssembly playground, its scripts, the analyzer artifact, and
+    the `'wasm-unsafe-eval'` CSP grant
+  - Added a static `#proof` section with recorded `zts check` output from zttp
+    commit `20caa237`: the handler source, the text report, and the JSON record
+    of the secret leak
+  - Rewrote the hero transcript around the ZTS613 compound-assignment repair
+  - Updated the measured claim to the latest convergence row: 9 of 13 first
+    drafts pass, 13 of 13 end proven, 13 of 13 pass their intent tests
+  - Removed the durable-workflow and hypermedia links
+  - Kept the v0.21.0 version label and download link until a 0.22 tag exists
+- Primary metric: every claim on the page names a feature that zttp 0.22 ships
+- Guardrails: no new routes, scripts, or origins; the page works without JS
+- Verification: `deno task verify`, and a browser check of `#proof` at 1280 and
+  400 pixels wide

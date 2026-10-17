@@ -185,19 +185,16 @@
             <div class="z-pane-title">
               <span>zttp expert</span><em>one session</em>
             </div>
-            <pre><code><span class="z-cmd">$</span> zttp expert <span class="z-str">"add auth to the webhook"</span>
+            <pre><code><span class="z-cmd">$</span> zttp expert <span class="z-str">"count retries in the webhook"</span>
 
 <span class="z-agent">[agent]</span>    draft 1: simulating before write
 <span class="z-err">[veto]</span>     draft adds a violation
-  <span class="z-err">error[E0003]: try/catch is not supported in zts</span>
+  <span class="z-err">error[ZTS613]: compound assignment is not part of canonical ZigTS</span>
     <span class="z-muted">--&gt; handler.ts:12:5</span>
 
-<span class="z-agent">[compiler]</span> canonicalize and re-simulate: still red
-<span class="z-agent">[compiler]</span> typed repair: try/catch -&gt; Result
+<span class="z-agent">[compiler]</span> typed repair: attempts += 1 -&gt; attempts = attempts + 1
 <span class="z-agent">[compiler]</span> applied with no model call
-           <span class="z-muted">edit recorded: compiler-authored</span>
-
-  <span class="z-safe">PROVEN  3/3 declared | 6/7 properties</span></code></pre>
+<span class="z-agent">[compiler]</span> <span class="z-safe">compiler-authored repair passed aggregate proof</span></code></pre>
           </div>
           <figcaption>
             The compiler rejects the draft, repairs it with no model call, then proves
@@ -615,8 +612,9 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           <article data-tier="thin">
             <h3>Measured</h3>
             <p>
-              On a fixed set of 19 coding tasks, 14 first drafts from DeepSeek
-              V4 Flash pass the compiler unchanged, and all 19 end proven.
+              On a fixed set of 13 coding tasks, 9 first drafts from DeepSeek V4
+              Flash pass the compiler unchanged. All 13 reach a proven handler,
+              and all 13 pass their intent tests.
             </p>
           </article>
           <article data-tier="unmeasured">
@@ -667,23 +665,13 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
           </details>
 
           <details class="z-page-detail">
-            <summary>Runtime and workflow details</summary>
+            <summary>Runtime details</summary>
             <div class="z-detail-links">
               <a
                 href="https://github.com/srdjan/zttp/blob/main/docs/proofs-and-receipts.md"
                 target="_blank"
                 rel="noopener noreferrer"
               >Proofs and receipts</a>
-              <a
-                href="https://github.com/srdjan/zttp/blob/main/docs/durable-workflows.md"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Durable workflows</a>
-              <a
-                href="https://github.com/srdjan/zttp/blob/main/docs/hypermedia-explainer.html"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Hypermedia resources</a>
             </div>
           </details>
         </div>
@@ -694,8 +682,7 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
         <h2>Prove your first handler.</h2>
         <p>
           Install zttp and scaffold an API. Then add a line zts does not allow,
-          such as try/catch, and watch the compiler name the broken guarantee
-          and the line.
+          such as try/catch, and watch the compiler name the rule and the line.
         </p>
 
         <div class="z-install-card" role="group" aria-label="Install command">
@@ -723,8 +710,8 @@ Zttp-Attest: eyJhbGciOiJFZERTQS...</pre>
 <span class="z-cmd">zttp</span> dev</code></pre>
           <p>
             <code>zttp expert</code> needs a DeepSeek key, or
-            <code>--provider local</code> and a local MLX server. The compiler,
-            CLI, and browser playground do not.
+            <code>--provider local</code> and a local MLX server. The compiler
+            and CLI do not.
           </p>
         </div>
 

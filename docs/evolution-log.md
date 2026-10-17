@@ -135,3 +135,19 @@
 - Guardrails: no new routes, scripts, or origins; the page works without JS
 - Verification: `deno task verify`, and a browser check of `#proof` at 1280 and
   400 pixels wide
+
+## Iteration 8: Site Version Follows zttp
+
+- What changed:
+  - The nav label, the download link, the download text, and the `deno.json`
+    version now show one version: the zttp version in `../ZTTP/VERSION`
+  - `deno task sync-version [X.Y.Z]` sets all four places and fails without
+    changes when the version is invalid or a place is not found exactly once
+  - A contract test fails when the four places name different versions
+  - This supersedes the Iteration 7 note that kept the v0.21.0 label until a
+    0.22 tag exists
+- Primary metric: the site never shows a version that zttp does not name
+- Guardrails: the zttp tag must be pushed before the site is deployed, or the
+  download link points at a missing release
+- Verification: `deno task verify`, and a probe of the new test in a scratch
+  clone with one value changed

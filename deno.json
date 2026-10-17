@@ -1,12 +1,13 @@
 {
   "name": "@srdjan/zttp-website",
-  "version": "0.22.0",
+  "version": "0.22.2",
   "exports": "./main.ts",
   "tasks": {
     "dev": "deno run --allow-net --allow-read --watch main.ts",
     "start": "deno run --allow-net --allow-read main.ts",
     "test": "deno test --allow-read",
-    "verify": "deno fmt --check && deno lint && deno check main.ts tests/site_contract_test.ts && deno task test",
+    "sync-version": "deno run --allow-read=deno.json,static/index.html,../ZTTP/VERSION --allow-write=deno.json,static/index.html scripts/sync_version.ts",
+    "verify": "deno fmt --check && deno lint && deno check main.ts scripts/sync_version.ts tests/site_contract_test.ts && deno task test",
     "deploy": "deno task verify && deployctl deploy --prod"
   },
   "imports": {

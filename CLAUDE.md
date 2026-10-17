@@ -41,6 +41,9 @@ step, no framework.
   homepage with in-memory doubles and drives the nav scroll spy through an
   `IntersectionObserver` double. Test-only DOM; nothing here reaches the
   browser.
+- `scripts/sync_version.ts` - sets the site version in `deno.json`, the nav
+  label, the download link, and the download text. Run it as
+  `deno task sync-version [X.Y.Z]`; with no argument it reads `../ZTTP/VERSION`.
 - `docs/` - design.md, plan.md, evolution-log.md, and solutions/. Reference
   these for product intent before reshaping copy or layout.
 
@@ -68,6 +71,10 @@ leave `:8000` bound or a browser session open between turns.
 
 ## Conventions
 
+- The site version follows zttp. `deno task sync-version` is the only way to
+  change it. Never edit the version in `deno.json` or the nav label and download
+  link in `static/index.html` by hand. The contract test fails when the four
+  copies disagree. Push the zttp tag before you deploy the site.
 - Server file is intentionally one file. Do not split it into modules unless
   adding genuinely new behavior.
 - Security headers in `main.ts` (CSP, X-Frame-Options, Referrer-Policy,

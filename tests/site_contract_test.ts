@@ -205,3 +205,26 @@ Deno.test("the homepage advertises no removed zttp feature", async () => {
     assert(!home.includes(removed), `the homepage still mentions ${removed}`);
   }
 });
+
+Deno.test("the site version follows one zttp version in four places", async () => {
+  const config = JSON.parse(await source("deno.json")) as { version?: unknown };
+  const home = await source("static/index.html");
+  const found: Record<string, string | undefined> = {
+    "deno.json version": typeof config.version === "string"
+      ? config.version
+      : undefined,
+    "nav label": home.match(/<small>v([^<]+)<\/small>/)?.[1],
+    "download href": home.match(/releases\/tag\/v([^"]+)"/)?.[1],
+    "download text": home.match(/>Download v([^<]+)<\/a>/)?.[1],
+  };
+
+  for (const [place, version] of Object.entries(found)) {
+    assert(version !== undefined, `${place} is missing`);
+    assert(
+      version === found["deno.json version"],
+      `${place} names ${version}, but deno.json names ${
+        found["deno.json version"]
+      }; run deno task sync-version`,
+    );
+  }
+});

@@ -1,5 +1,16 @@
 # Evolution Log
 
+## Iteration 9: Compiler and Runtime Reliability
+
+The evidence section now names development improvements that await release. The
+update covers named intersections, long alias chains, callback timeouts, array
+failures, and shared diagnostics from the analyzer. Flow checks also support
+deep mixed expressions, nested calls, and matches within existing safety
+budgets.
+
+The release version remains 0.24.0. The update adds no routes or scripts. The
+sitemap records the content change on 2026-10-25.
+
 ## Iteration 1: zts Expert Agent Section + Design Polish
 
 - What changed:

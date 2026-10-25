@@ -447,6 +447,27 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
               >Proofs and receipts</a>
             </div>
           </details>
+
+          <details class="z-page-detail">
+            <summary>Development improvements, pending release</summary>
+            <div>
+              <p>
+                Type checking now accepts intersections through named types.
+                Long alias chains no longer need pairwise overlap checks.
+              </p>
+              <p>
+                Timeouts inside callbacks keep their timeout status.
+                Concatenation and sorted copies report allocation failures.
+                Analyzer checks and repair commands report unexpected failures
+                as structured diagnostics.
+              </p>
+              <p>
+                Flow checks handle expressions beyond the former 256-level
+                limit, including mixed expressions, nested calls, and matches.
+                Function calls and analysis work still have safety budgets.
+              </p>
+            </div>
+          </details>
         </div>
       </section>
 

@@ -466,6 +466,12 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 limit, including mixed expressions, nested calls, and matches.
                 Function calls and analysis work still have safety budgets.
               </p>
+              <p>
+                File-bound agent tools reject secret paths and aliases.
+                Declaring a returning helper no longer proves that its handler
+                returns a response. HEAD status and error replies omit response
+                bodies.
+              </p>
             </div>
           </details>
         </div>

@@ -8,6 +8,10 @@ failures, and shared diagnostics from the analyzer. Flow checks also support
 deep mixed expressions, nested calls, and matches within existing safety
 budgets.
 
+The reviewed fixes also protect secret paths in agent tools, correct proofs of
+handler completion, and remove response bodies from HEAD status and error
+replies.
+
 The release version remains 0.24.0. The update adds no routes or scripts. The
 sitemap records the content change on 2026-10-25.
 

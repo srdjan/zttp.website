@@ -473,6 +473,13 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 returns a response. HEAD status and error replies omit response
                 bodies.
               </p>
+              <p>
+                A handler with no failable I/O now proves fault coverage, so
+                the first handler in the user guide passes <code>zttp check</code>.
+                <code>zttp deploy</code>, <code>zttp build</code>, and
+                <code>zttp compile</code> refuse a handler that
+                <code>zttp check</code> refuses.
+              </p>
             </div>
           </details>
         </div>

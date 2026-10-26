@@ -12,8 +12,12 @@ The reviewed fixes also protect secret paths in agent tools, correct proofs of
 handler completion, and remove response bodies from HEAD status and error
 replies.
 
+A handler with no failable I/O now proves fault coverage. The build commands
+refuse a handler that `zttp check` refuses. Both changes are in the zttp
+repository and await release.
+
 The release version remains 0.24.0. The update adds no routes or scripts. The
-sitemap records the content change on 2026-10-25.
+sitemap records the content change on 2026-10-26.
 
 ## Iteration 1: zts Expert Agent Section + Design Polish
 

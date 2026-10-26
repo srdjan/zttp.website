@@ -411,13 +411,14 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
               a request, the binary checks the proof again with its own
               independent checker, and it refuses to start if anything inside
               was changed. Anyone can run <code>zttp verify &lt;url&gt;</code> to
-              check the signature.
+              check the signature. Pinning a key with
+              <code>--trust-key</code> authenticates the signer.
             </p>
           </div>
           <ul aria-label="Runtime proof carrier">
             <li>One self-contained binary</li>
             <li>Proof checked at startup</li>
-            <li>Signed and publicly verifiable</li>
+            <li>Signed claims that anyone can check</li>
           </ul>
         </div>
 

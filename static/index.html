@@ -480,6 +480,13 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 <code>zttp compile</code> refuse a handler that
                 <code>zttp check</code> refuses.
               </p>
+              <p>
+                Flow checks now treat every <code>env()</code> value as secret
+                unless the project policy lists its name in
+                <code>env.public</code>. A handler that returned
+                <code>env("DATABASE_URL")</code> used to prove
+                <code>no_secret_leakage</code>.
+              </p>
             </div>
           </details>
         </div>

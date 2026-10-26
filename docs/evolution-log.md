@@ -16,6 +16,10 @@ A handler with no failable I/O now proves fault coverage. The build commands
 refuse a handler that `zttp check` refuses. Both changes are in the zttp
 repository and await release.
 
+Flow checks now treat every `env()` value as secret unless the project policy
+lists its name in `env.public`. This change is in the zttp repository and awaits
+release.
+
 The release version remains 0.24.0. The update adds no routes or scripts. The
 sitemap records the content change on 2026-10-26.
 

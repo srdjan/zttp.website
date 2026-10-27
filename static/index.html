@@ -379,15 +379,16 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
           <article data-tier="thin">
             <h3>Measured</h3>
             <p>
-              On a fixed set of 13 coding tasks, 9 first drafts from DeepSeek V4
-              Flash pass the compiler unchanged. All 13 reach a proven handler,
-              and all 13 pass their intent tests. zttp 0.24.0 closes the 20
+              On a fixed set of 13 coding tasks, 8 first drafts from DeepSeek V4
+              Flash pass the compiler unchanged. 12 reach a proven handler, and
+              11 pass their intent tests. zttp 0.24.0 closes the 20
               <a
                 href="https://github.com/srdjan/zttp/blob/main/docs/proofs-and-receipts.md#known-limits-of-the-security-chips"
                 target="_blank"
                 rel="noopener noreferrer"
-              >known false security proofs</a> of 0.22.3. Each one has a
-              permanent regression test.
+              >known false security proofs</a> of 0.22.3, and 0.25.0 closes
+              two more: secret env names and the <code>mask</code> bound. Each
+              one has a permanent regression test.
             </p>
           </article>
           <article data-tier="unmeasured">
@@ -450,8 +451,16 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
           </details>
 
           <details class="z-page-detail">
-            <summary>Development improvements, pending release</summary>
+            <summary>What changed in 0.25.0</summary>
             <div>
+              <p>
+                Some changes refuse handlers that 0.24.0 accepted. The
+                <a
+                  href="https://github.com/srdjan/zttp/blob/main/CHANGELOG.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >changelog</a> gives the migration for each one.
+              </p>
               <p>
                 Type checking now accepts intersections through named types.
                 Long alias chains no longer need pairwise overlap checks.
@@ -463,9 +472,9 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 as structured diagnostics.
               </p>
               <p>
-                Flow checks handle expressions beyond the former 256-level
-                limit, including mixed expressions, nested calls, and matches.
-                Function calls and analysis work still have safety budgets.
+                A deep call chain no longer crashes the flow check. Past 64
+                nested calls, the property is unproven. Long expressions are
+                still checked in full.
               </p>
               <p>
                 File-bound agent tools reject secret paths and aliases.
@@ -486,6 +495,12 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 <code>env.public</code>. A handler that returned
                 <code>env("DATABASE_URL")</code> used to prove
                 <code>no_secret_leakage</code>.
+              </p>
+              <p>
+                <code>mask</code> declassifies a secret only with a literal
+                bound of 4 or less, on the unmodified value.
+                <code>mask(secret, 39)</code> used to prove
+                <code>no_secret_leakage</code> while it revealed 39 bytes.
               </p>
             </div>
           </details>

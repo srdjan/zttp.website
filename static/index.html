@@ -379,9 +379,9 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
           <article data-tier="thin">
             <h3>Measured</h3>
             <p>
-              On a fixed set of 13 coding tasks, 8 first drafts from DeepSeek V4
-              Flash pass the compiler unchanged. 12 reach a proven handler, and
-              11 pass their intent tests. zttp 0.24.0 closes the 20
+              On a fixed set of 13 coding tasks, 10 first drafts from DeepSeek
+              V4 Flash pass the compiler unchanged. 10 reach a proven handler,
+              and 10 pass their intent tests. zttp 0.24.0 closes the 20
               <a
                 href="https://github.com/srdjan/zttp/blob/main/docs/proofs-and-receipts.md#known-limits-of-the-security-chips"
                 target="_blank"
@@ -451,56 +451,42 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
           </details>
 
           <details class="z-page-detail">
-            <summary>What changed in 0.25.0</summary>
+            <summary>What changed in 0.26.0</summary>
             <div>
               <p>
-                Some changes refuse handlers that 0.24.0 accepted. The
+                <code>fetchWithRetry</code> now refuses a write that carries a
+                credential header, so a write with the user's authority does
+                not repeat. The
                 <a
                   href="https://github.com/srdjan/zttp/blob/main/CHANGELOG.md"
                   target="_blank"
                   rel="noopener noreferrer"
-                >changelog</a> gives the migration for each one.
+                >changelog</a> gives the migration.
               </p>
               <p>
-                Type checking now accepts intersections through named types.
-                Long alias chains no longer need pairwise overlap checks.
+                The expert tools now read the same analysis as
+                <code>zttp check</code>, and every rejection that they report
+                carries a repair plan. Thirteen error codes that had no help
+                text now have it.
               </p>
               <p>
-                Timeouts inside callbacks keep their timeout status.
-                Concatenation and sorted copies report allocation failures.
-                Analyzer checks and repair commands report unexpected failures
-                as structured diagnostics.
+                The acceptance kernel now checks <code>results_checked</code>
+                again itself: every read of a Result must be guarded.
+                <code>zttp proofs verify</code> names the properties that the
+                kernel checked on a <code>Checked:</code> line.
               </p>
               <p>
-                A deep call chain no longer crashes the flow check. Past 64
-                nested calls, the property is unproven. Long expressions are
-                still checked in full.
+                A flow property is now unproven until its pass proves it. A
+                certificate no longer claims <code>capability_bounded</code>
+                for a handler without <code>Effects&lt;...&gt;</code>. A Result
+                that a loop body reassigns is no longer proved checked on the
+                next iteration.
               </p>
               <p>
-                File-bound agent tools reject secret paths and aliases.
-                Declaring a returning helper no longer proves that its handler
-                returns a response. HEAD status and error replies omit response
-                bodies.
-              </p>
-              <p>
-                A handler with no failable I/O now proves fault coverage, so
-                the first handler in the user guide passes <code>zttp check</code>.
-                <code>zttp deploy</code>, <code>zttp build</code>, and
-                <code>zttp compile</code> refuse a handler that
-                <code>zttp check</code> refuses.
-              </p>
-              <p>
-                Flow checks now treat every <code>env()</code> value as secret
-                unless the project policy lists its name in
-                <code>env.public</code>. A handler that returned
-                <code>env("DATABASE_URL")</code> used to prove
-                <code>no_secret_leakage</code>.
-              </p>
-              <p>
-                <code>mask</code> declassifies a secret only with a literal
-                bound of 4 or less, on the unmodified value.
-                <code>mask(secret, 39)</code> used to prove
-                <code>no_secret_leakage</code> while it revealed 39 bytes.
+                <code>zttp proofs verify</code> refuses a bundle whose
+                certificate or contract differs from the copy inside the
+                binary. A module export runs with only the capabilities that it
+                declares. The JWT and webhook helpers refuse an empty secret.
               </p>
             </div>
           </details>

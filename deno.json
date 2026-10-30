@@ -1,6 +1,6 @@
 {
   "name": "@srdjan/zttp-website",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "exports": "./main.ts",
   "tasks": {
     "dev": "deno run --allow-net --allow-read --watch main.ts",

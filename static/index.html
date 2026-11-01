@@ -490,6 +490,25 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
               </p>
             </div>
           </details>
+
+          <details class="z-page-detail">
+            <summary>Awaiting the next release</summary>
+            <div>
+              <p>
+                <code>zttp compile</code>, <code>zttp build</code>, and
+                <code>zttp deploy</code> now build a handler with file
+                imports. The binary carries one proof certificate over every
+                file, and the build runs each check on each file. A dependency
+                edit makes the binary refuse to start.
+              </p>
+              <p>
+                The compiler states that the certificate covers every file.
+                The checker binds the file bytes through digests and does not
+                confirm that coverage. This change is in the zttp repository
+                and awaits release.
+              </p>
+            </div>
+          </details>
         </div>
       </section>
 

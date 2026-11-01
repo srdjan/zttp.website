@@ -1,5 +1,16 @@
 # Evolution Log
 
+## Iteration 10: File Imports Build With a Certificate
+
+The evidence section now names one development change that awaits release. The
+build commands accept a handler with file imports and produce one certificate
+over every file. The compiler states that the certificate covers every file, and
+the checker does not confirm that coverage. The change is in the zttp repository
+and awaits release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap records the content change on 2026-11-01.
+
 ## Iteration 9: Compiler and Runtime Reliability
 
 The evidence section now names development improvements that await release. The

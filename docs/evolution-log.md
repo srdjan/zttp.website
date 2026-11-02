@@ -1,5 +1,16 @@
 # Evolution Log
 
+## Iteration 12: Function Values and Type Guards
+
+The evidence section now states two checker fixes on the development tree.
+`zttp check` refuses a function where a number, a record field, or a JSON value
+is expected. It also refuses a type guard whose test does not prove its claim.
+Before, handlers of these kinds passed the check and faulted at runtime. Both
+changes are in the zttp repository and await release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap records the content change on 2026-11-02.
+
 ## Iteration 11: Check Parity and a Development Recording
 
 The evidence section now states that `zttp check` reports the refusals of the

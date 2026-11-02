@@ -515,6 +515,14 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 intent passes. The figures under Measured describe the released
                 0.26.0.
               </p>
+              <p>
+                <code>zttp check</code> now refuses a function where a number,
+                a record field, or a JSON value is expected. It also refuses a
+                type guard whose test does not prove the type that the guard
+                claims. Before, handlers of these kinds passed the check and
+                then faulted on a path that the proof called safe. This change
+                is in the zttp repository and awaits release.
+              </p>
             </div>
           </details>
         </div>

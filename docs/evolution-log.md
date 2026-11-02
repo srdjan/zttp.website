@@ -1,5 +1,16 @@
 # Evolution Log
 
+## Iteration 13: Arithmetic Operands
+
+The evidence section now states one more checker fix on the development tree.
+`zttp check` refuses arithmetic on a value that may be `undefined` or `null`, or
+that is declared `unknown`, unless a guard first proves it is a number. Before,
+eight measured handlers of this kind passed the check and faulted at runtime.
+The change is in the zttp repository and awaits release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap date stays 2026-11-02.
+
 ## Iteration 12: Function Values and Type Guards
 
 The evidence section now states two checker fixes on the development tree.

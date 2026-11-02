@@ -523,6 +523,14 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 then faulted on a path that the proof called safe. This change
                 is in the zttp repository and awaits release.
               </p>
+              <p>
+                <code>zttp check</code> now also refuses arithmetic on a value
+                that may be <code>undefined</code> or <code>null</code>, or that
+                is declared <code>unknown</code>, unless a guard first proves
+                it is a number. Eight
+                such handlers passed the check and then faulted at runtime.
+                This change is in the zttp repository and awaits release.
+              </p>
             </div>
           </details>
         </div>

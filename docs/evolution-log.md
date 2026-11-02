@@ -1,5 +1,16 @@
 # Evolution Log
 
+## Iteration 11: Check Parity and a Development Recording
+
+The evidence section now states that `zttp check` reports the refusals of the
+build on every file. It also gives a new recording of the 13 tasks on the
+development tree: 8 first drafts pass unchanged, 11 handlers reach a proof, and
+11 pass their intent tests. The Measured figures still describe the released
+0.26.0, so the update does not change them.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap records the content change on 2026-11-01.
+
 ## Iteration 10: File Imports Build With a Certificate
 
 The evidence section now names one development change that awaits release. The

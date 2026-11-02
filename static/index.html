@@ -531,6 +531,14 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 such handlers passed the check and then faulted at runtime.
                 This change is in the zttp repository and awaits release.
               </p>
+              <p>
+                A builtin call now has the type of the value that the runtime
+                returns. <code>xs.length</code> is a number, and a request
+                header is a string or <code>undefined</code>. Before, a handler
+                could store a header that may be missing as a string, pass
+                the check, and then fault at runtime. This change is in the
+                zttp repository and awaits release.
+              </p>
             </div>
           </details>
         </div>

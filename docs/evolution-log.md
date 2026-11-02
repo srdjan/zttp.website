@@ -1,5 +1,16 @@
 # Evolution Log
 
+## Iteration 14: Builtin Result Types
+
+The evidence section now states one more checker fix on the development tree. A
+builtin call has the type of the value that the runtime returns, such as a
+number for `xs.length` and a string or `undefined` for a request header. Before,
+two measured handlers stored such a value as the wrong type, passed the check,
+and faulted at runtime. The change is in the zttp repository and awaits release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap date stays 2026-11-02.
+
 ## Iteration 13: Arithmetic Operands
 
 The evidence section now states one more checker fix on the development tree.

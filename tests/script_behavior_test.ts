@@ -8,12 +8,10 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
-const PAGE = await Deno.readTextFile(
-  new URL("../static/index.html", import.meta.url),
-);
-const SOURCE = await Deno.readTextFile(
-  new URL("../static/script.js", import.meta.url),
-);
+const [PAGE, SOURCE] = await Promise.all([
+  Deno.readTextFile(new URL("../static/index.html", import.meta.url)),
+  Deno.readTextFile(new URL("../static/script.js", import.meta.url)),
+]);
 const evaluateScript = new Function(
   "env",
   `const {\ndocument, IntersectionObserver, navigator, setTimeout, globalThis\n} = env;\n${SOURCE}`,

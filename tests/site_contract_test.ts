@@ -207,8 +207,11 @@ Deno.test("the homepage advertises no removed zttp feature", async () => {
 });
 
 Deno.test("the site version follows one zttp version in four places", async () => {
-  const config = JSON.parse(await source("deno.json")) as { version?: unknown };
-  const home = await source("static/index.html");
+  const [configSource, home] = await Promise.all([
+    source("deno.json"),
+    source("static/index.html"),
+  ]);
+  const config = JSON.parse(configSource) as { version?: unknown };
   const found: Record<string, string | undefined> = {
     "deno.json version": typeof config.version === "string"
       ? config.version

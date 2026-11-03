@@ -1,5 +1,17 @@
 # Evolution Log
 
+## Iteration 16: Member Access and Dict Types
+
+The evidence section now states one more checker fix on the development tree. A
+member call must name a member that the value holds at runtime, and an index
+read on a string is refused. A typed `Dict` now reaches the `zttp:collections`
+functions, and their callbacks take the key and value types. Before, six
+measured handlers passed the check and then faulted at runtime. The change is in
+the zttp repository and awaits release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap date moves to 2026-11-03.
+
 ## Iteration 15: Callback and Result Types
 
 The evidence section now states one more checker fix on the development tree. An

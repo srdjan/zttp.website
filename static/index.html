@@ -547,6 +547,14 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 mismatch. This change is in the zttp repository and awaits
                 release.
               </p>
+              <p>
+                A member call must name a member that the value holds at
+                runtime, and an index read on a string is refused. A typed
+                <code>Dict</code> now reaches the collection functions. Before,
+                six measured handlers passed the check and then faulted at
+                runtime. This change is in the zttp repository and awaits
+                release.
+              </p>
             </div>
           </details>
         </div>

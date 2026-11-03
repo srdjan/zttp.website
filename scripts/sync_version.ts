@@ -62,12 +62,15 @@ async function run(args: string[]): Promise<Result<string>> {
   const version = args[0] ??
     (await Deno.readTextFile(new URL("../../ZTTP/VERSION", import.meta.url)))
       .trim();
-  const files: Record<string, string> = {};
-  for (const name of new Set(targets.map((t) => t.file))) {
-    files[name] = await Deno.readTextFile(
-      new URL(`../${name}`, import.meta.url),
-    );
-  }
+  const names = [...new Set(targets.map((t) => t.file))];
+  const contents = await Promise.all(
+    names.map((name) =>
+      Deno.readTextFile(new URL(`../${name}`, import.meta.url))
+    ),
+  );
+  const files: Record<string, string> = Object.fromEntries(
+    names.map((name, index) => [name, contents[index]]),
+  );
   const result = applyVersion(version, files);
   if (!result.ok) return result;
   for (const [name, text] of Object.entries(result.value)) {

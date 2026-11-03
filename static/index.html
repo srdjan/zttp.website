@@ -539,6 +539,14 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 the check, and then fault at runtime. This change is in the
                 zttp repository and awaits release.
               </p>
+              <p>
+                A callback parameter with a type must accept the value that
+                the array method passes, and a <code>Result</code> from a
+                virtual module has the error type that the runtime stores.
+                Before, six measured handlers passed the check with such a
+                mismatch. This change is in the zttp repository and awaits
+                release.
+              </p>
             </div>
           </details>
         </div>

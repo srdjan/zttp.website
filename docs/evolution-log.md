@@ -1,5 +1,17 @@
 # Evolution Log
 
+## Iteration 15: Callback and Result Types
+
+The evidence section now states one more checker fix on the development tree. An
+annotated array callback must accept the value that the method passes. A
+`Result` from a virtual module has the error type that the runtime stores, and
+the `zttp:result` combinators carry types. Before, six measured handlers passed
+the check with such a mismatch. The change is in the zttp repository and awaits
+release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap date stays 2026-11-02.
+
 ## Iteration 14: Builtin Result Types
 
 The evidence section now states one more checker fix on the development tree. A

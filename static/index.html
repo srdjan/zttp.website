@@ -103,7 +103,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=31">
+    <link rel="stylesheet" href="/style.css?v=32">
   </head>
   <body class="zttp-home">
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -490,81 +490,182 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
               </p>
             </div>
           </details>
+        </div>
 
+        <h3 class="z-development-heading" id="development">
+          Awaiting the next release
+        </h3>
+        <p class="z-section-intro">
+          These changes are in development source through commit
+          <code>e5073153</code>. They are not in the v0.26.0 download.
+          The details below separate new checks, upgrade steps, and evidence limits.
+        </p>
+        <div class="z-detail-grid" aria-labelledby="development" role="group">
           <details class="z-page-detail">
-            <summary>Awaiting the next release</summary>
+            <summary>Handlers with file imports</summary>
             <div>
               <p>
                 <code>zttp compile</code>, <code>zttp build</code>, and
-                <code>zttp deploy</code> now build a handler with file
-                imports. The binary carries one proof certificate over every
-                file, and the build runs each check on each file. A dependency
-                edit makes the binary refuse to start.
+                <code>zttp deploy</code> build handlers with file imports into
+                one binary with one certificate. Each dependency passes the
+                applicable checks. Ambiguous bindings, untyped file imports,
+                and failed capsule properties stop the build.
               </p>
               <p>
-                The compiler states that the certificate covers every file.
-                The checker binds the file bytes through digests and does not
-                confirm that coverage. This change is in the zttp repository
-                and awaits release.
+                <code>zttp check</code> reports module refusals with a code and
+                the file at fault. ZTS063 names a module graph refusal.
+                ZTS064 names an import without a type that can cross modules.
+                <code>GraphResultsNotProved</code> remains a build-only refusal.
               </p>
               <p>
-                <code>zttp check</code> now reports the refusals of the build
-                on every file, with a code and the file at fault. A new
-                recording of the 13 tasks on this development tree gives 8
-                first drafts that pass unchanged, 11 proven handlers, and 11
-                intent passes. The figures under Measured describe the released
-                0.26.0.
+                The producer states that the proof covers every file.
+                The independent checker binds dependency bytes through digests;
+                it does not confirm that coverage. A dependency edit makes
+                the built binary refuse to start.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/docs/verification.md#handlers-with-file-imports"
+                target="_blank"
+                rel="noopener noreferrer">Module checks and certificate limits</a>
+            </div>
+          </details>
+
+          <details class="z-page-detail">
+            <summary>Stronger type checks</summary>
+            <div>
+              <p>
+                The checker refuses function values in incompatible typed
+                positions and type guards whose tests do not prove their claims.
+                Arithmetic requires a number type. A builtin result receives
+                its runtime type when the argument types support that result.
+                A missing request header therefore needs a check or fallback.
               </p>
               <p>
-                <code>zttp check</code> now refuses a function where a number,
-                a record field, or a JSON value is expected. It also refuses a
-                type guard whose test does not prove the type that the guard
-                claims. Before, handlers of these kinds passed the check and
-                then faulted on a path that the proof called safe. This change
-                is in the zttp repository and awaits release.
+                Array callbacks must accept the values that the method passes.
+                Result combinators carry value and error types, and module
+                errors follow their runtime payloads. Even after a successful
+                Result check, its value can still admit <code>undefined</code>.
+                A schema failure can fill <code>errors</code> and leave
+                <code>error</code> absent.
               </p>
               <p>
-                <code>zttp check</code> now also refuses arithmetic on a value
-                that may be <code>undefined</code> or <code>null</code>, or that
-                is declared <code>unknown</code>, unless a guard first proves
-                it is a number. Eight
-                such handlers passed the check and then faulted at runtime.
-                This change is in the zttp repository and awaits release.
+                Member calls must name runtime members. String index reads
+                are refused; <code>charAt</code> and <code>slice</code> provide
+                supported alternatives. Typed Dict operations preserve key and
+                value types, including callback parameters. A missing Dict key
+                still reads <code>undefined</code>.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/docs/typescript.md#builtin-result-types"
+                target="_blank"
+                rel="noopener noreferrer">Builtin, Result, member, and Dict types</a>
+            </div>
+          </details>
+
+          <details class="z-page-detail">
+            <summary>Arrays, tuples, and writes</summary>
+            <div>
+              <p>
+                Array inference and checks retain elements beyond the previous
+                fixed limit. Loops over array literals give their variables
+                element types. An unresolved element contributes
+                <code>unknown</code> without removing checks on known elements.
+                Fixed tuple spreads retain positions and correlated alternatives.
+                A variable array spread cannot claim a fixed tuple length.
               </p>
               <p>
-                A builtin call now has the type of the value that the runtime
-                returns. <code>xs.length</code> is a number, and a request
-                header is a string or <code>undefined</code>. Before, a handler
-                could store a header that may be missing as a string, pass
-                the check, and then fault at runtime. This change is in the
-                zttp repository and awaits release.
+                Writes must fit each relevant container member, including
+                members of wide unions. Inferred numeric containers accept
+                compatible numeric writes after literal widening.
+                Explicit literal annotations remain restrictive.
+                Tuple length changes are refused.
               </p>
               <p>
-                A callback parameter with a type must accept the value that
-                the array method passes, and a <code>Result</code> from a
-                virtual module has the error type that the runtime stores.
-                Before, six measured handlers passed the check with such a
-                mismatch. This change is in the zttp repository and awaits
-                release.
+                A value with no type is refused in arithmetic and member calls.
+                Some gaps remain: a write with no inferred value type can pass.
+                <code>Response.json</code> refuses known non-string Dict keys,
+                but unknown keys can still pass. Allocation failures stop
+                analysis; they do not establish a runtime guarantee.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/docs/typescript.md#writes-into-containers"
+                target="_blank"
+                rel="noopener noreferrer">Container rules and remaining gaps</a>
+            </div>
+          </details>
+
+          <details class="z-page-detail">
+            <summary>Upgrade guidance</summary>
+            <div>
+              <p>
+                Earlier artifacts need a rebuild and redeployment because
+                <code>semanticsHash</code> changed. Existing self-extracting
+                binaries keep running. Source that fails admission now stops
+                at load, including imported files and inline source.
               </p>
               <p>
-                A member call must name a member that the value holds at
-                runtime, and an index read on a string is refused. A typed
-                <code>Dict</code> now reaches the collection functions. Before,
-                six measured handlers passed the check and then faulted at
-                runtime. This change is in the zttp repository and awaits
-                release.
+                Contract consumers read <code>responses</code> instead of the
+                removed scalar response fields. Changes to status, content
+                type, or response count can now stop a proof-aware hot swap.
+                Scripts must remove <code>--no-sign</code> from
+                <code>zttp proofs gate</code>.
               </p>
               <p>
-                A value with no type is refused in arithmetic and as the
-                receiver of a member call, and a loop over an array literal
-                now gives its variable a type. <code>Response.json</code>
-                refuses a <code>Dict</code> whose keys are not strings, and a
-                write into a record, an array, or a tuple must fit the type of
-                its slot. Before, twelve measured handlers passed the check
-                and then faulted at runtime. This change is in the zttp
-                repository and awaits release.
+                <code>zttp auth claude</code> and <code>zttp auth openai</code>
+                are removed. Their <code>auth revoke</code> commands still delete
+                stored keys. The current installer no longer accepts
+                <code>zigttp-*</code> release assets. It requires v0.19.0 or later.
               </p>
+              <p>
+                Source migrations include missing-value checks, compatible
+                callback types, and supported member operations.
+                Internal code moves, dead-code removal, and test migrations
+                simplify maintenance. They establish no performance improvement.
+                The changelog also lists Zig embedding changes and renamed
+                repair intents.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/CHANGELOG.md#unreleased"
+                target="_blank"
+                rel="noopener noreferrer">Complete migration record</a>
+            </div>
+          </details>
+
+          <details class="z-page-detail">
+            <summary>Development evidence and limits</summary>
+            <div>
+              <p>
+                The 2026-11-02 recording uses DeepSeek V4 Flash, source commit
+                <code>df3a6757</code>, and corpus <code>91c9e8aaf5e4</code>.
+                Across 13 tasks, 8 first drafts pass unchanged, 11 reach proven
+                handlers, and 11 pass intent tests. The median is 5 round trips.
+              </p>
+              <p>
+                That recording predates later checker changes. It does not
+                measure the current source revision. The figures under
+                Measured describe released v0.26.0.
+                The recorded corpus trips 1 of 59 advertised rules.
+                That count does not describe total regression coverage or
+                measure the quality of future model drafts.
+              </p>
+              <p>
+                Proof properties have specific limits. A structural return
+                proof does not prevent a trap inside a called function.
+                The optional runtime cost fuse requires
+                <code>cost_ceilings</code>; shipped commands do not configure it.
+              </p>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/docs/convergence.md"
+                target="_blank"
+                rel="noopener noreferrer">Recorded model results</a>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/docs/coverage.md"
+                target="_blank"
+                rel="noopener noreferrer">Recorded rule coverage</a>
+              <a
+                href="https://github.com/srdjan/zttp/blob/e5073153d2498a900301f8e22df2b56a831fc133/docs/verification.md#cost-envelope-multiplicity"
+                target="_blank"
+                rel="noopener noreferrer">Runtime cost limits</a>
             </div>
           </details>
         </div>

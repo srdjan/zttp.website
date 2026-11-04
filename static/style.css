@@ -689,6 +689,10 @@ code {
   color: var(--z-accent);
 }
 
+.z-development-heading {
+  margin-top: 2.5rem;
+}
+
 .z-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

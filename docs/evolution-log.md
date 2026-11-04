@@ -2,14 +2,23 @@
 
 ## Iteration 18: Full Checks for Wide Containers
 
-The development checker now checks every element of an array literal. A write
-through a union must fit every member, including members after position 16.
-These checks refuse programs that earlier checks accepted despite incompatible
-types.
+The development checker retains known array element types when another element
+has no inferred type. That element contributes `unknown`. Empty nested
+containers and known spreads keep their types.
 
-Regression tests cover invalid elements after position 32, writes through wide
-unions, array mutation, and tuple mutation. Allocation-failure tests check that
-analysis stops with an error and releases temporary storage.
+Fixed tuple spreads retain positions and correlated alternatives. The checker
+removes duplicate alternatives before it expands the next spread. A variable
+array spread cannot claim a fixed tuple length.
+
+A write through a union must fit every member, including members after position
+16. Unannotated numeric array fields accept numeric writes across wide literal
+unions. Explicit literal annotations still restrict writes. String writes to
+these numeric arrays still fail.
+
+Regression tests cover invalid elements after position 32, unresolved elements,
+fixed spreads, wide unions, array mutation, and tuple mutation.
+Allocation-failure tests check that analysis stops with an error and releases
+temporary storage.
 
 The fixes apply to development source and await release. The release version
 remains 0.26.0.

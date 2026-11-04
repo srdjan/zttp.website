@@ -555,6 +555,16 @@ function handler(req: Request): Guardrails&lt;Response&gt; {
                 runtime. This change is in the zttp repository and awaits
                 release.
               </p>
+              <p>
+                A value with no type is refused in arithmetic and as the
+                receiver of a member call, and a loop over an array literal
+                now gives its variable a type. <code>Response.json</code>
+                refuses a <code>Dict</code> whose keys are not strings, and a
+                write into a record, an array, or a tuple must fit the type of
+                its slot. Before, twelve measured handlers passed the check
+                and then faulted at runtime. This change is in the zttp
+                repository and awaits release.
+              </p>
             </div>
           </details>
         </div>

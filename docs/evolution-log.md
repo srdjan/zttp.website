@@ -1,5 +1,18 @@
 # Evolution Log
 
+## Iteration 17: Untyped Values and Container Writes
+
+The evidence section now states one more checker fix on the development tree. A
+value with no type is refused in arithmetic and as the receiver of a member
+call, and a loop over an array literal gives its variable a type.
+`Response.json` refuses a `Dict` whose keys are not strings, and a write into a
+record, an array, or a tuple must fit the type of its slot. Before, twelve
+measured handlers passed the check and then faulted at runtime. The change is in
+the zttp repository and awaits release.
+
+The release version remains 0.26.0. The update adds no routes or scripts. The
+sitemap date stays 2026-11-03.
+
 ## Iteration 16: Member Access and Dict Types
 
 The evidence section now states one more checker fix on the development tree. A

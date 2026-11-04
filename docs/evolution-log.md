@@ -1,5 +1,19 @@
 # Evolution Log
 
+## Iteration 18: Full Checks for Wide Containers
+
+The development checker now checks every element of an array literal. A write
+through a union must fit every member, including members after position 16.
+These checks refuse programs that earlier checks accepted despite incompatible
+types.
+
+Regression tests cover invalid elements after position 32, writes through wide
+unions, array mutation, and tuple mutation. Allocation-failure tests check that
+analysis stops with an error and releases temporary storage.
+
+The fixes apply to development source and await release. The release version
+remains 0.26.0.
+
 ## Iteration 17: Untyped Values and Container Writes
 
 The evidence section now states one more checker fix on the development tree. A

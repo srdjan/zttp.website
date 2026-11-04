@@ -1,5 +1,52 @@
 # Evolution Log
 
+## Iteration 19: Grouped Development Changes and Upgrade Guidance
+
+The homepage separates unreleased changes into five native disclosures. The
+groups cover file imports, type checks, containers, upgrades, and development
+evidence. The release labels and downloads remain at v0.26.0.
+
+The content identifies source revision `e5073153`. Seven new source links use
+that revision. Each linked file and heading resolves in the local ZTTP checkout.
+Remote GitHub availability was not checked.
+
+The file-import summary retains the build-only `GraphResultsNotProved`
+exception. Certificate coverage remains a producer claim. Dependency digests
+bind bytes but do not confirm coverage.
+
+The container summary includes wide arrays, union members, fixed tuple spreads,
+and unresolved elements. It preserves gaps for writes without inferred value
+types and Dict keys with unknown types.
+
+Upgrade guidance covers artifact rebuilds, response contracts, removed CLI
+options, authentication commands, and installer compatibility. The complete
+changelog carries embedding changes and renamed repair intents.
+
+The development measurement names its recording date, source, model, and corpus.
+The copy separates that recording from later checker changes and released
+measurements. Rule coverage does not describe the full regression suite.
+
+The heading has a 2.5rem top margin after browser inspection found insufficient
+spacing. Both documents load CSS version 32. The sitemap date is 2026-11-04.
+
+### Acceptance results
+
+`deno task verify` passed formatting, lint, type checks, and all 14 existing
+tests. No application logic changed. No new tests duplicate the content.
+
+Playwright checks passed at 1440 and 390 CSS pixels. All five disclosures opened
+with the keyboard. Content stayed within the viewport and each disclosure. The
+same widths passed with JavaScript disabled, including installation navigation.
+Mobile navigation reached installation and closed its menu.
+
+The local content review checked the complete diff, source claims, instructions,
+and accepted plan. No actionable findings remain. The review ran in the main
+context; no independent reviewer ran. The required Sol model was unavailable.
+The review did not execute Zig tests or measure runtime performance.
+
+The test browser tab closed. The server stopped, and port 8000 is free. The user
+owns publication; no push or deployment ran.
+
 ## Iteration 18: Full Checks for Wide Containers
 
 The development checker retains known array element types when another element
